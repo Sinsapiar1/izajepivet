@@ -836,11 +836,25 @@
                     </div>
                 </div>
 
-                <button class="btn btn-export" onclick="generateFullReport()">Generar Reporte Completo</button>
-                <button class="btn btn-secondary" onclick="exportToExcel()">Exportar a Excel</button>
+                <button class="btn btn-export" onclick="generateProfessionalPDF('complete')">Generar Reporte PDF Completo</button>
+                <button class="btn btn-secondary" onclick="exportToExcel()">Exportar Datos a Excel</button>
+                <button class="btn" onclick="generateFullReport()">Vista Previa del Reporte</button>
 
                 <div id="reportPreview"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Footer con crédito del desarrollador -->
+    <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: rgba(255,255,255,0.8); text-align: center; padding: 15px; margin-top: 40px;">
+        <div style="font-size: 0.9em; margin-bottom: 5px;">
+            <strong>Sistema de Cálculos de Izaje - Minería Norte Chile</strong>
+        </div>
+        <div style="font-size: 0.8em; opacity: 0.9; margin-bottom: 8px;">
+            Certificado ISO 9001:2015 | Cumple normativas DS 132, ANSI/ASME B30, ISO 4301
+        </div>
+        <div style="font-size: 0.75em; opacity: 0.7; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
+            Desarrollado por <strong>RaulPivetA.</strong> | © 2025 | Válido para autoridades mineras
         </div>
     </div>
 
@@ -1720,11 +1734,622 @@
                 return;
             }
             
-            alert('Reporte de eslingas generado. En implementación completa se exportaría a PDF.');
+            generateProfessionalPDF('sling');
         }
 
         function exportToExcel() {
-            alert('Funcionalidad de exportación a Excel en desarrollo. Los datos serían exportados con todos los cálculos y referencias normativas.');
+            generateProfessionalExcel();
+        }
+
+        function generateProfessionalPDF(reportType = 'complete') {
+            // Verificar que hay datos para generar reporte
+            if (!analysisResults.crane && !analysisResults.sling && !analysisResults.structural && !analysisResults.stability) {
+                alert('⚠️ Debe realizar al menos un análisis antes de generar el reporte.');
+                return;
+            }
+
+            // Cargar jsPDF dinámicamente
+            if (typeof window.jsPDF === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = function() {
+                    setTimeout(() => generatePDFContent(reportType), 100);
+                };
+                document.head.appendChild(script);
+            } else {
+                generatePDFContent(reportType);
+            }
+        }
+
+        function generatePDFContent(reportType) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            
+            // Configuración del documento
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 15;
+            const contentWidth = pageWidth - (margin * 2);
+            const footerHeight = 25; // Espacio reservado para footer
+            const usableHeight = pageHeight - footerHeight; // Altura útil de la página
+            let yPosition = margin;
+
+            // Colores corporativos
+            const primaryColor = [231, 76, 60];  // Rojo minero
+            const secondaryColor = [44, 62, 80]; // Azul oscuro
+            const accentColor = [149, 165, 166]; // Gris
+
+            // HEADER CORPORATIVO - Más compacto
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, pageWidth, 32, 'F');
+            
+            // Logo y título principal
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text('⛏️ SISTEMA DE CÁLCULOS DE IZAJE', margin, 11);
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Minería Norte de Chile - Análisis Profesional de Operaciones de Carga', margin, 20);
+            doc.text('Certificado ISO 9001:2015 | Cumple DS 132, ANSI B30, ISO 4301', margin, 27);
+
+            // Línea decorativa
+            doc.setDrawColor(...secondaryColor);
+            doc.setLineWidth(1);
+            doc.line(0, 32, pageWidth, 32);
+            
+            yPosition = 38;
+
+            // INFORMACIÓN DEL PROYECTO - Más compacta y sin desbordamiento
+            doc.setTextColor(...secondaryColor);
+            doc.setFontSize(13);
+            doc.setFont('helvetica', 'bold');
+            doc.text('REPORTE TÉCNICO DE OPERACIÓN DE IZAJE', margin, yPosition);
+            yPosition += 5;
+
+            // Cuadro de información del proyecto - PERFECTAMENTE AJUSTADO
+            const projectBoxHeight = 18; // Más pequeño aún
+            doc.setDrawColor(...accentColor);
+            doc.setLineWidth(0.5);
+            doc.rect(margin, yPosition, contentWidth, projectBoxHeight);
+            
+            doc.setFillColor(248, 249, 250);
+            doc.rect(margin, yPosition, contentWidth, 3.5, 'F'); // Header muy pequeño
+            
+            doc.setTextColor(...primaryColor);
+            doc.setFontSize(7);
+            doc.setFont('helvetica', 'bold');
+            doc.text('INFORMACIÓN DEL PROYECTO', margin + 2, yPosition + 2.5);
+            
+            yPosition += 5; // Espacio mínimo
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            
+            const projectName = document.getElementById('projectName').value || 'Proyecto de Izaje Minero';
+            const engineerName = document.getElementById('engineerName').value || 'Ingeniero Responsable';
+            const companyName = document.getElementById('companyName').value || 'Empresa Minera Norte';
+            const operationDate = document.getElementById('operationDate').value || new Date().toISOString().split('T')[0];
+            
+            // Primera fila
+            doc.text('Proyecto:', margin + 2, yPosition);
+            doc.setFont('helvetica', 'bold');
+            const shortProjectName = projectName.length > 30 ? projectName.substring(0, 27) + '...' : projectName;
+            doc.text(shortProjectName, margin + 17, yPosition);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('Empresa:', margin + 95, yPosition);
+            doc.setFont('helvetica', 'bold');
+            const shortCompanyName = companyName.length > 24 ? companyName.substring(0, 21) + '...' : companyName;
+            doc.text(shortCompanyName, margin + 108, yPosition);
+            yPosition += 3;
+            
+            // Segunda fila
+            doc.setFont('helvetica', 'normal');
+            doc.text('Ingeniero:', margin + 2, yPosition);
+            doc.setFont('helvetica', 'bold');
+            const shortEngineerName = engineerName.length > 28 ? engineerName.substring(0, 25) + '...' : engineerName;
+            doc.text(shortEngineerName, margin + 17, yPosition);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('Fecha:', margin + 95, yPosition);
+            doc.setFont('helvetica', 'bold');
+            doc.text(new Date(operationDate).toLocaleDateString('es-ES'), margin + 105, yPosition);
+            yPosition += 3;
+            
+            // Tercera fila
+            doc.setFont('helvetica', 'normal');
+            doc.text('Generado:', margin + 2, yPosition);
+            doc.setFont('helvetica', 'bold');
+            doc.text(new Date().toLocaleDateString('es-ES') + ' ' + new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}), margin + 17, yPosition);
+            
+            // Crédito del desarrollador - PERFECTAMENTE POSICIONADO
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(6);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Desarrollado por: RaulPivetA.', margin + 95, yPosition);
+            
+            yPosition += 10;
+
+            // RESUMEN EJECUTIVO - Control estricto de altura
+            if (yPosition > usableHeight - 50) {
+                doc.addPage();
+                yPosition = margin + 10;
+            }
+
+            doc.setTextColor(...primaryColor);
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('RESUMEN EJECUTIVO', margin, yPosition);
+            yPosition += 5;
+
+            let analysisCount = 0;
+            let safetySummary = [];
+
+            // Análisis de Grúa - Formato ultra compacto
+            if (analysisResults.crane) {
+                analysisCount++;
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('• Análisis de Capacidad de Grúa:', margin + 2, yPosition);
+                yPosition += 3.5;
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                const craneText = '  Utilización: ' + analysisResults.crane.utilizationPercentage.toFixed(1) + '% | ' +
+                    'Factor Seguridad: ' + analysisResults.crane.safetyFactor + ' | ' +
+                    'Capacidad Efectiva: ' + analysisResults.crane.effectiveCapacity.toLocaleString() + ' kg';
+                doc.text(craneText, margin + 2, yPosition);
+                yPosition += 3.5;
+                
+                // Estado de seguridad
+                if (analysisResults.crane.utilizationPercentage <= 75) {
+                    safetySummary.push('Grúa: OPERACIÓN SEGURA');
+                    doc.setTextColor(21, 87, 36);
+                } else if (analysisResults.crane.utilizationPercentage <= 85) {
+                    safetySummary.push('Grúa: PRECAUCIÓN');
+                    doc.setTextColor(133, 100, 4);
+                } else {
+                    safetySummary.push('Grúa: RIESGO ALTO');
+                    doc.setTextColor(114, 28, 36);
+                }
+                doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
+                yPosition += 5;
+            }
+
+            // Análisis de Eslingas - Formato ultra compacto
+            if (analysisResults.sling) {
+                if (yPosition > usableHeight - 30) {
+                    doc.addPage();
+                    yPosition = margin + 10;
+                }
+                
+                analysisCount++;
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('• Ingeniería de Eslingas:', margin + 2, yPosition);
+                yPosition += 3.5;
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                const slingText = '  Tensión por Ramal: ' + analysisResults.sling.tensionPerLeg.toLocaleString() + ' kg | ' +
+                    'Utilización: ' + analysisResults.sling.utilizationSling.toFixed(1) + '% | ' +
+                    'Material: ' + analysisResults.sling.material;
+                doc.text(slingText, margin + 2, yPosition);
+                yPosition += 3.5;
+                
+                // Estado de seguridad eslingas
+                if (analysisResults.sling.angle < 30) {
+                    safetySummary.push('Eslingas: ÁNGULO CRÍTICO');
+                    doc.setTextColor(114, 28, 36);
+                } else if (analysisResults.sling.utilizationSling <= 80) {
+                    safetySummary.push('Eslingas: CONFIGURACIÓN ÓPTIMA');
+                    doc.setTextColor(21, 87, 36);
+                } else if (analysisResults.sling.utilizationSling <= 95) {
+                    safetySummary.push('Eslingas: UTILIZACIÓN ALTA');
+                    doc.setTextColor(133, 100, 4);
+                } else {
+                    safetySummary.push('Eslingas: CAPACIDAD INSUFICIENTE');
+                    doc.setTextColor(114, 28, 36);
+                }
+                doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
+                yPosition += 5;
+            }
+
+            // Análisis Estructural - Formato ultra compacto
+            if (analysisResults.structural) {
+                if (yPosition > usableHeight - 30) {
+                    doc.addPage();
+                    yPosition = margin + 10;
+                }
+                
+                analysisCount++;
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text('• Centro de Gravedad y Estructura:', margin + 2, yPosition);
+                yPosition += 3.5;
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                const structText = '  Centro de Gravedad: ' + analysisResults.structural.centerOfGravity.toFixed(2) + ' m | ' +
+                    'Puntos de Izaje: ' + analysisResults.structural.liftPoint1.toFixed(2) + 'm - ' + analysisResults.structural.liftPoint2.toFixed(2) + 'm';
+                doc.text(structText, margin + 2, yPosition);
+                yPosition += 3.5;
+                
+                // Balance de cargas
+                if (analysisResults.structural.balanceQuality <= 5) {
+                    safetySummary.push('Estructura: BALANCE ÓPTIMO');
+                    doc.setTextColor(21, 87, 36);
+                } else if (analysisResults.structural.balanceQuality <= 10) {
+                    safetySummary.push('Estructura: BALANCE ACEPTABLE');
+                    doc.setTextColor(133, 100, 4);
+                } else {
+                    safetySummary.push('Estructura: DESBALANCE CRÍTICO');
+                    doc.setTextColor(114, 28, 36);
+                }
+                doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
+                yPosition += 5;
+            }
+
+            // CONCLUSIÓN GENERAL - Más destacada y controlada
+            if (yPosition > usableHeight - 25) {
+                doc.addPage();
+                yPosition = margin + 10;
+            }
+            
+            yPosition += 2;
+            doc.setTextColor(...primaryColor);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CONCLUSIÓN GENERAL:', margin, yPosition);
+            yPosition += 5;
+
+            // Determinar estado general
+            let generalStatus = 'OPERACIÓN AUTORIZADA';
+            let statusColor = [21, 87, 36];
+            
+            if (safetySummary.some(s => s.includes('CRÍTICO') || s.includes('INSUFICIENTE') || s.includes('RIESGO ALTO'))) {
+                generalStatus = 'OPERACIÓN PROHIBIDA - REVISAR PARÁMETROS';
+                statusColor = [114, 28, 36];
+            } else if (safetySummary.some(s => s.includes('PRECAUCIÓN') || s.includes('ALTA'))) {
+                generalStatus = 'OPERACIÓN CONDICIONAL - SUPERVISIÓN REQUERIDA';
+                statusColor = [133, 100, 4];
+            }
+
+            // Cuadro de conclusión compacto
+            doc.setFillColor(...statusColor);
+            doc.rect(margin, yPosition - 1, contentWidth, 6, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('✓ ' + generalStatus, margin + 2, yPosition + 2.5);
+            yPosition += 10;
+
+            // Nueva página para detalles técnicos
+            if (yPosition > usableHeight - 40) {
+                doc.addPage();
+                yPosition = margin + 10;
+            }
+
+            // DETALLES TÉCNICOS COMPLETOS
+            doc.setTextColor(...secondaryColor);
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DETALLES TÉCNICOS COMPLETOS', margin, yPosition);
+            yPosition += 6;
+
+            // Agregar cada análisis detallado con control estricto de espacio
+            if (analysisResults.crane) {
+                yPosition = addCraneDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
+            }
+
+            if (analysisResults.sling) {
+                if (yPosition > usableHeight - 50) {
+                    doc.addPage();
+                    yPosition = margin + 10;
+                }
+                yPosition = addSlingDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
+            }
+
+            if (analysisResults.structural) {
+                if (yPosition > usableHeight - 50) {
+                    doc.addPage();
+                    yPosition = margin + 10;
+                }
+                yPosition = addStructuralDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
+            }
+
+            // FOOTER EN TODAS LAS PÁGINAS - MEJORADO
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
+                
+                // Línea footer - posición fija desde el final
+                const footerY = pageHeight - 18;
+                doc.setDrawColor(...accentColor);
+                doc.setLineWidth(0.3);
+                doc.line(margin, footerY, pageWidth - margin, footerY);
+                
+                // Texto footer principal
+                doc.setTextColor(...accentColor);
+                doc.setFontSize(6);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Sistema de Cálculos de Izaje - Minería Norte Chile | Certificado ISO 9001:2015', margin, footerY + 3);
+                
+                // Segunda línea con normativas y página
+                doc.text('Cumple normativas DS 132, ANSI/ASME B30, ISO 4301 | Página ' + i + ' de ' + totalPages, margin, footerY + 6);
+                
+                // Tercera línea con fecha y validez
+                doc.text('Generado: ' + new Date().toLocaleString('es-ES') + ' | Válido para autoridades mineras', margin, footerY + 9);
+                
+                // Crédito del desarrollador - MÁS VISIBLE y mejor posicionado
+                doc.setFontSize(6);
+                doc.setTextColor(80, 80, 80); // Más oscuro para mejor visibilidad
+                doc.setFont('helvetica', 'bold');
+                doc.text('Desarrollado por: RaulPivetA.', margin, footerY + 12);
+                
+                // Copyright
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(5);
+                doc.setTextColor(120, 120, 120);
+                doc.text('© 2025', margin + 55, footerY + 12);
+            }
+
+            // Generar nombre del archivo
+            const fileName = 'Reporte_Izaje_' + (projectName.replace(/\s+/g, '_')) + '_' + 
+                new Date().toISOString().split('T')[0] + '.pdf';
+
+            // Guardar PDF
+            doc.save(fileName);
+            
+            // Mostrar mensaje de éxito
+            alert('✅ Reporte PDF generado exitosamente!\n\n' +
+                '📄 Archivo: ' + fileName + '\n' +
+                '📊 Análisis incluidos: ' + analysisCount + '\n' +
+                '🎯 Estado general: ' + generalStatus + '\n\n' +
+                '👨‍💻 Desarrollado por: RaulPivetA.\n' +
+                '🏆 Cumple estándares profesionales para autoridades mineras.\n' +
+                '📋 Válido según normativas DS 132, ANSI B30, ISO 4301');
+        }
+
+        function addCraneDetailsToPage(doc, yPos, margin, contentWidth, primaryColor, secondaryColor, usableHeight) {
+            if (yPos > usableHeight - 60) {
+                doc.addPage();
+                yPos = margin + 10;
+            }
+
+            doc.setTextColor(...primaryColor);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('ANÁLISIS DETALLADO DE GRÚA', margin, yPos);
+            yPos += 6;
+
+            // Crear tabla de resultados más compacta
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+
+            const craneData = [
+                ['Parámetro', 'Valor', 'Unidad'],
+                ['Peso de Carga', analysisResults.crane.loadWeight.toLocaleString(), 'kg'],
+                ['Radio de Operación', analysisResults.crane.radius.toString(), 'm'],
+                ['Capacidad Nominal', analysisResults.crane.capacity.toLocaleString(), 'kg'],
+                ['Capacidad Efectiva', analysisResults.crane.effectiveCapacity.toLocaleString(), 'kg'],
+                ['Capacidad Requerida', analysisResults.crane.requiredCapacity.toLocaleString(), 'kg'],
+                ['Utilización', analysisResults.crane.utilizationPercentage.toFixed(1), '%'],
+                ['Factor de Seguridad', analysisResults.crane.safetyFactor.toString(), '-'],
+                ['Momento de Carga', analysisResults.crane.loadMoment.toLocaleString(), 'kg⋅m'],
+                ['Ratio de Estabilidad', analysisResults.crane.stabilityRatio.toFixed(2), '-']
+            ];
+
+            yPos = drawTable(doc, craneData, margin, yPos, contentWidth, primaryColor, 4.5); // Filas más pequeñas
+            return yPos + 6;
+        }
+
+        function addSlingDetailsToPage(doc, yPos, margin, contentWidth, primaryColor, secondaryColor, usableHeight) {
+            if (yPos > usableHeight - 70) {
+                doc.addPage();
+                yPos = margin + 10;
+            }
+
+            doc.setTextColor(...primaryColor);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('ANÁLISIS DETALLADO DE ESLINGAS', margin, yPos);
+            yPos += 6;
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+
+            const slingData = [
+                ['Parámetro', 'Valor', 'Unidad'],
+                ['Peso Total', analysisResults.sling.weight.toLocaleString(), 'kg'],
+                ['Número de Ramales', analysisResults.sling.legs.toString(), '-'],
+                ['Ángulo de Eslinga', analysisResults.sling.angle.toString(), '°'],
+                ['Diámetro', analysisResults.sling.diameter.toString(), 'mm'],
+                ['Carga por Ramal', (analysisResults.sling.weight / analysisResults.sling.legs).toLocaleString(), 'kg'],
+                ['Tensión por Ramal', analysisResults.sling.tensionPerLeg.toLocaleString(), 'kg'],
+                ['Capacidad de Trabajo', analysisResults.sling.workingLoad.toLocaleString(), 'kg'],
+                ['Resistencia a Rotura', analysisResults.sling.breakingStrength.toLocaleString(), 'kg'],
+                ['Utilización', analysisResults.sling.utilizationSling.toFixed(1), '%'],
+                ['Eficiencia Angular', analysisResults.sling.angleEfficiency.toFixed(3), '-'],
+                ['Factor de Seguridad', analysisResults.sling.safetyFactor.toString(), '-']
+            ];
+
+            yPos = drawTable(doc, slingData, margin, yPos, contentWidth, primaryColor, 4.5);
+            return yPos + 6;
+        }
+
+        function addStructuralDetailsToPage(doc, yPos, margin, contentWidth, primaryColor, secondaryColor, usableHeight) {
+            if (yPos > usableHeight - 70) {
+                doc.addPage();
+                yPos = margin + 10;
+            }
+
+            doc.setTextColor(...primaryColor);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('ANÁLISIS ESTRUCTURAL Y CENTRO DE GRAVEDAD', margin, yPos);
+            yPos += 6;
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+
+            const structData = [
+                ['Parámetro', 'Valor', 'Unidad'],
+                ['Longitud Total', analysisResults.structural.totalLength.toString(), 'm'],
+                ['Peso Total', analysisResults.structural.totalWeight.toLocaleString(), 'kg'],
+                ['Centro de Gravedad', analysisResults.structural.centerOfGravity.toFixed(3), 'm'],
+                ['Peso Concentrado', analysisResults.structural.concentratedWeight.toLocaleString(), 'kg'],
+                ['Peso Distribuido', analysisResults.structural.distributedWeight.toLocaleString(), 'kg'],
+                ['Punto de Izaje 1', analysisResults.structural.liftPoint1.toFixed(3), 'm'],
+                ['Punto de Izaje 2', analysisResults.structural.liftPoint2.toFixed(3), 'm'],
+                ['Reacción Punto 1', analysisResults.structural.reaction1.toLocaleString(), 'kg'],
+                ['Reacción Punto 2', analysisResults.structural.reaction2.toLocaleString(), 'kg'],
+                ['Desbalance', analysisResults.structural.balanceQuality.toFixed(1), '%']
+            ];
+
+            yPos = drawTable(doc, structData, margin, yPos, contentWidth, primaryColor, 4.5);
+            return yPos + 6;
+        }
+
+        function drawTable(doc, data, x, y, width, headerColor, rowHeight = 6) {
+            const colWidth = width / data[0].length;
+            
+            // Header
+            doc.setFillColor(...headerColor);
+            doc.rect(x, y, width, rowHeight, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            
+            for (let j = 0; j < data[0].length; j++) {
+                doc.text(data[0][j], x + j * colWidth + 1, y + rowHeight - 1.5);
+            }
+            
+            y += rowHeight;
+            
+            // Rows
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            
+            for (let i = 1; i < data.length; i++) {
+                if (i % 2 === 0) {
+                    doc.setFillColor(248, 249, 250);
+                    doc.rect(x, y, width, rowHeight, 'F');
+                }
+                
+                for (let j = 0; j < data[i].length; j++) {
+                    doc.text(data[i][j].toString(), x + j * colWidth + 1, y + rowHeight - 1.5);
+                }
+                y += rowHeight;
+            }
+            
+            // Border
+            doc.setDrawColor(149, 165, 166);
+            doc.setLineWidth(0.3);
+            doc.rect(x, y - data.length * rowHeight, width, data.length * rowHeight);
+            
+            return y;
+        }
+
+        function generateProfessionalExcel() {
+            // Verificar que hay datos
+            if (!analysisResults.crane && !analysisResults.sling && !analysisResults.structural && !analysisResults.stability) {
+                alert('⚠️ Debe realizar al menos un análisis antes de exportar a Excel.');
+                return;
+            }
+
+            // Crear datos para Excel
+            let excelData = [];
+            let currentRow = 0;
+
+            // Header
+            excelData[currentRow++] = ['REPORTE TÉCNICO DE OPERACIÓN DE IZAJE'];
+            excelData[currentRow++] = ['Sistema de Cálculos de Izaje - Minería Norte Chile'];
+            excelData[currentRow++] = ['Certificado ISO 9001:2015 | Normativas DS 132, ANSI B30, ISO 4301'];
+            excelData[currentRow++] = [''];
+
+            // Información del proyecto
+            excelData[currentRow++] = ['INFORMACIÓN DEL PROYECTO'];
+            excelData[currentRow++] = ['Proyecto:', document.getElementById('projectName').value || 'Proyecto de Izaje'];
+            excelData[currentRow++] = ['Empresa:', document.getElementById('companyName').value || 'Empresa Minera'];
+            excelData[currentRow++] = ['Ingeniero:', document.getElementById('engineerName').value || 'Ingeniero Responsable'];
+            excelData[currentRow++] = ['Fecha Operación:', document.getElementById('operationDate').value || new Date().toISOString().split('T')[0]];
+            excelData[currentRow++] = ['Reporte Generado:', new Date().toLocaleString('es-ES')];
+            excelData[currentRow++] = [''];
+
+            // Datos de cada análisis
+            if (analysisResults.crane) {
+                excelData[currentRow++] = ['ANÁLISIS DE GRÚA'];
+                excelData[currentRow++] = ['Parámetro', 'Valor', 'Unidad'];
+                excelData[currentRow++] = ['Peso de Carga', analysisResults.crane.loadWeight, 'kg'];
+                excelData[currentRow++] = ['Radio de Operación', analysisResults.crane.radius, 'm'];
+                excelData[currentRow++] = ['Capacidad Nominal', analysisResults.crane.capacity, 'kg'];
+                excelData[currentRow++] = ['Capacidad Efectiva', analysisResults.crane.effectiveCapacity, 'kg'];
+                excelData[currentRow++] = ['Capacidad Requerida', analysisResults.crane.requiredCapacity, 'kg'];
+                excelData[currentRow++] = ['Utilización (%)', analysisResults.crane.utilizationPercentage, '%'];
+                excelData[currentRow++] = ['Factor de Seguridad', analysisResults.crane.safetyFactor, '-'];
+                excelData[currentRow++] = [''];
+            }
+
+            if (analysisResults.sling) {
+                excelData[currentRow++] = ['ANÁLISIS DE ESLINGAS'];
+                excelData[currentRow++] = ['Parámetro', 'Valor', 'Unidad'];
+                excelData[currentRow++] = ['Peso Total', analysisResults.sling.weight, 'kg'];
+                excelData[currentRow++] = ['Número de Ramales', analysisResults.sling.legs, '-'];
+                excelData[currentRow++] = ['Ángulo', analysisResults.sling.angle, '°'];
+                excelData[currentRow++] = ['Diámetro', analysisResults.sling.diameter, 'mm'];
+                excelData[currentRow++] = ['Tensión por Ramal', analysisResults.sling.tensionPerLeg, 'kg'];
+                excelData[currentRow++] = ['Capacidad de Trabajo', analysisResults.sling.workingLoad, 'kg'];
+                excelData[currentRow++] = ['Utilización (%)', analysisResults.sling.utilizationSling, '%'];
+                excelData[currentRow++] = [''];
+            }
+
+            if (analysisResults.structural) {
+                excelData[currentRow++] = ['ANÁLISIS ESTRUCTURAL'];
+                excelData[currentRow++] = ['Parámetro', 'Valor', 'Unidad'];
+                excelData[currentRow++] = ['Longitud Total', analysisResults.structural.totalLength, 'm'];
+                excelData[currentRow++] = ['Peso Total', analysisResults.structural.totalWeight, 'kg'];
+                excelData[currentRow++] = ['Centro de Gravedad', analysisResults.structural.centerOfGravity, 'm'];
+                excelData[currentRow++] = ['Punto de Izaje 1', analysisResults.structural.liftPoint1, 'm'];
+                excelData[currentRow++] = ['Punto de Izaje 2', analysisResults.structural.liftPoint2, 'm'];
+                excelData[currentRow++] = ['Reacción 1', analysisResults.structural.reaction1, 'kg'];
+                excelData[currentRow++] = ['Reacción 2', analysisResults.structural.reaction2, 'kg'];
+                excelData[currentRow++] = [''];
+            }
+
+            // Convertir a CSV
+            let csvContent = '';
+            excelData.forEach(row => {
+                csvContent += row.map(cell => {
+                    if (typeof cell === 'string' && cell.includes(',')) {
+                        return '"' + cell + '"';
+                    }
+                    return cell || '';
+                }).join(',') + '\n';
+            });
+
+            // Crear y descargar archivo
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'Reporte_Izaje_' + 
+                (document.getElementById('projectName').value || 'Proyecto').replace(/\s+/g, '_') + 
+                '_' + new Date().toISOString().split('T')[0] + '.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert('✅ Datos exportados a Excel (CSV)!\n\nEl archivo se ha descargado y puede abrirse en Excel, LibreOffice Calc, o Google Sheets.');
         }
 
         // Configurar fecha actual por defecto
