@@ -4,6 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Cálculos de Izaje - Minería Norte Chile</title>
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+         window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        // Reemplaza 'GA_MEASUREMENT_ID' con tu ID real de Google Analytics
+        gtag('config', 'G-Y417FSBFB6', {
+            page_title: 'Sistema de Cálculos de Izaje',
+            page_location: window.location.href,
+            content_group1: 'Aplicaciones Mineras',
+            content_group2: 'Cálculos de Ingeniería'
+        });
+        
+        // Función para trackear eventos personalizados
+        function trackEvent(action, category, label, value) {
+            gtag('event', action, {
+                event_category: category,
+                event_label: label,
+                value: value
+            });
+        }
+        
+        // Función para trackear cálculos realizados
+        function trackCalculation(calculationType, parameters) {
+            gtag('event', 'calculation_completed', {
+                event_category: 'Engineering_Calculations',
+                event_label: calculationType,
+                custom_parameters: JSON.stringify(parameters)
+            });
+        }
+        
+        // Función para trackear exportaciones
+        function trackExport(exportType, fileFormat) {
+            gtag('event', 'export_completed', {
+                event_category: 'File_Exports',
+                event_label: exportType + '_' + fileFormat,
+                export_method: fileFormat
+            });
+        }
+    </script>
+    
     <style>
         * {
             margin: 0;
@@ -16,14 +60,15 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             color: #333;
+            line-height: 1.6;
         }
 
         .header-bar {
             background: linear-gradient(135deg, #d4351c 0%, #aa2317 100%);
             color: white;
-            padding: 5px 0;
+            padding: 8px 0;
             text-align: center;
-            font-size: 0.9em;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
             font-weight: 600;
         }
 
@@ -34,12 +79,14 @@
             border-radius: 12px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.15);
             overflow: hidden;
+            margin-left: 10px;
+            margin-right: 10px;
         }
 
         .header {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
-            padding: 25px 40px;
+            padding: clamp(15px, 4vw, 25px) clamp(20px, 5vw, 40px);
             position: relative;
         }
 
@@ -55,19 +102,19 @@
 
         .header-content {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr;
             align-items: center;
-            gap: 30px;
+            gap: 20px;
         }
 
         .header h1 {
-            font-size: 2.2em;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
             margin-bottom: 8px;
             font-weight: 700;
         }
 
         .header p {
-            font-size: 1em;
+            font-size: clamp(0.8rem, 2vw, 1rem);
             opacity: 0.9;
             margin-bottom: 5px;
         }
@@ -78,7 +125,7 @@
             border-radius: 8px;
             padding: 15px;
             text-align: center;
-            min-width: 200px;
+            margin-top: 15px;
         }
 
         .certification-badge .cert-title {
@@ -94,17 +141,17 @@
 
         .tabs {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
         }
 
         .tab {
-            padding: 16px 20px;
+            padding: clamp(12px, 3vw, 16px) clamp(10px, 2vw, 20px);
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 0.95em;
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
             font-weight: 600;
             color: #495057;
             transition: all 0.3s ease;
@@ -123,7 +170,7 @@
         }
 
         .content {
-            padding: 35px 40px;
+            padding: clamp(20px, 5vw, 35px) clamp(20px, 5vw, 40px);
         }
 
         .tab-content {
@@ -146,10 +193,11 @@
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
         }
 
         .section-icon {
-            font-size: 2.5em;
+            font-size: clamp(2rem, 5vw, 2.5rem);
             margin-right: 15px;
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             -webkit-background-clip: text;
@@ -158,7 +206,7 @@
         }
 
         .section-title {
-            font-size: 1.8em;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
             font-weight: 700;
             color: #2c3e50;
         }
@@ -166,7 +214,7 @@
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            gap: clamp(15px, 3vw, 25px);
             margin-bottom: 25px;
         }
 
@@ -179,16 +227,16 @@
             margin-bottom: 8px;
             font-weight: 600;
             color: #2c3e50;
-            font-size: 0.95em;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 14px 16px;
+            padding: clamp(12px, 3vw, 14px) 16px;
             border: 2px solid #e9ecef;
             border-radius: 8px;
-            font-size: 1em;
+            font-size: clamp(0.9rem, 2vw, 1rem);
             transition: all 0.3s ease;
             background: white;
         }
@@ -203,15 +251,17 @@
         .btn {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
-            padding: 14px 35px;
+            padding: clamp(12px, 3vw, 14px) clamp(25px, 5vw, 35px);
             border: none;
             border-radius: 8px;
-            font-size: 1em;
+            font-size: clamp(0.9rem, 2vw, 1rem);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             margin: 10px 10px 10px 0;
             box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            width: 100%;
+            max-width: 200px;
         }
 
         .btn:hover {
@@ -232,7 +282,7 @@
         .result-container {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 12px;
-            padding: 25px;
+            padding: clamp(15px, 4vw, 25px);
             margin: 25px 0;
             border-left: 5px solid #e74c3c;
         }
@@ -244,56 +294,60 @@
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid #dee2e6;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .result-title {
-            font-size: 1.3em;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
             font-weight: 700;
             color: #2c3e50;
         }
 
         .result-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: clamp(15px, 3vw, 20px);
             margin-bottom: 20px;
         }
 
         .result-item {
             background: white;
-            padding: 15px 20px;
+            padding: clamp(12px, 3vw, 15px) clamp(15px, 4vw, 20px);
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             border-left: 4px solid #3498db;
         }
 
         .result-label {
-            font-size: 0.9em;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
             color: #7f8c8d;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
         .result-value {
-            font-size: 1.4em;
+            font-size: clamp(1.2rem, 3vw, 1.4rem);
             font-weight: 700;
             color: #2c3e50;
+            word-break: break-word;
         }
 
         .result-unit {
-            font-size: 0.9em;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
             color: #95a5a6;
             margin-left: 5px;
         }
 
         .alert {
-            padding: 18px 25px;
+            padding: clamp(15px, 4vw, 18px) clamp(20px, 5vw, 25px);
             border-radius: 8px;
             margin: 20px 0;
             font-weight: 600;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .alert-success {
@@ -315,7 +369,8 @@
         }
 
         .alert-icon {
-            font-size: 1.5em;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            flex-shrink: 0;
         }
 
         .reference-table {
@@ -325,18 +380,19 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border-radius: 8px;
             overflow: hidden;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
         }
 
         .reference-table th {
             background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
             color: white;
-            padding: 15px;
+            padding: clamp(10px, 3vw, 15px);
             text-align: left;
             font-weight: 600;
         }
 
         .reference-table td {
-            padding: 12px 15px;
+            padding: clamp(8px, 2vw, 12px) clamp(10px, 3vw, 15px);
             border-bottom: 1px solid #dee2e6;
             background: white;
         }
@@ -345,10 +401,16 @@
             background: #f8f9fa;
         }
 
+        /* Tabla responsiva */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .standards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: clamp(15px, 3vw, 20px);
             margin: 25px 0;
         }
 
@@ -356,7 +418,7 @@
             background: white;
             border: 2px solid #e9ecef;
             border-radius: 10px;
-            padding: 20px;
+            padding: clamp(15px, 4vw, 20px);
             text-align: center;
             transition: transform 0.3s ease;
         }
@@ -367,7 +429,7 @@
         }
 
         .standard-icon {
-            font-size: 3em;
+            font-size: clamp(2.5rem, 5vw, 3rem);
             margin-bottom: 15px;
             color: #e74c3c;
         }
@@ -375,13 +437,13 @@
         .calculation-steps {
             background: #f8f9fa;
             border-radius: 8px;
-            padding: 20px;
+            padding: clamp(15px, 4vw, 20px);
             margin: 20px 0;
         }
 
         .step {
             margin-bottom: 15px;
-            padding: 10px 15px;
+            padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 15px);
             background: white;
             border-radius: 6px;
             border-left: 4px solid #3498db;
@@ -396,14 +458,28 @@
         .formula {
             background: #2c3e50;
             color: white;
-            padding: 15px;
+            padding: clamp(12px, 3vw, 15px);
             border-radius: 6px;
             font-family: 'Courier New', monospace;
             margin: 10px 0;
             text-align: center;
-            font-size: 1.1em;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            word-break: break-word;
         }
 
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .button-group .btn {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        /* Mejoras específicas para móviles */
         @media (max-width: 768px) {
             .header-content {
                 grid-template-columns: 1fr;
@@ -418,6 +494,145 @@
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
+            
+            .tabs {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            
+            .tab {
+                font-size: 0.8rem;
+                padding: 10px 5px;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .button-group .btn {
+                max-width: none;
+                width: 100%;
+            }
+            
+            .alert {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .reference-table {
+                font-size: 0.7rem;
+            }
+            
+            .reference-table th,
+            .reference-table td {
+                padding: 8px 4px;
+            }
+            
+            /* Ocultar columnas menos importantes en móvil */
+            .reference-table .mobile-hidden {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px 5px;
+                border-radius: 8px;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            
+            .section-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Mejoras para impresión */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            
+            .header-bar,
+            .tabs,
+            .btn {
+                display: none !important;
+            }
+            
+            .container {
+                box-shadow: none !important;
+                border: 1px solid #ccc;
+            }
+            
+            .result-container {
+                break-inside: avoid;
+            }
+            
+            .reference-table {
+                break-inside: avoid;
+            }
+        }
+
+        /* Accesibilidad mejorada */
+        .btn:focus,
+        .form-group input:focus,
+        .form-group select:focus,
+        .tab:focus {
+            outline: 2px solid #e74c3c;
+            outline-offset: 2px;
+        }
+
+        /* Indicador de carga */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tooltips para mejor UX */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -513,8 +728,10 @@
                     </div>
                 </div>
 
-                <button class="btn" onclick="calculateCraneAnalysis()">Realizar Análisis Completo</button>
-                <button class="btn btn-secondary" onclick="clearCraneInputs()">Limpiar Datos</button>
+                <div class="button-group">
+                    <button class="btn" onclick="calculateCraneAnalysis()">Realizar Análisis Completo</button>
+                    <button class="btn btn-secondary" onclick="clearCraneInputs()">Limpiar Datos</button>
+                </div>
 
                 <div id="craneAnalysisResult"></div>
             </div>
@@ -583,8 +800,10 @@
                     </div>
                 </div>
 
-                <button class="btn" onclick="calculateSlingEngineering()">Calcular Ingeniería de Eslingas</button>
-                <button class="btn btn-secondary" onclick="generateSlingReport()">Generar Reporte</button>
+                <div class="button-group">
+                    <button class="btn" onclick="calculateSlingEngineering()">Calcular Ingeniería de Eslingas</button>
+                    <button class="btn btn-secondary" onclick="generateSlingReport()">Generar Reporte</button>
+                </div>
 
                 <div id="slingEngineeringResult"></div>
             </div>
@@ -665,8 +884,10 @@
                     </div>
                 </div>
 
-                <button class="btn btn-secondary" onclick="addConcentratedLoad()">Agregar Carga Concentrada</button>
-                <button class="btn" onclick="calculateStructuralAnalysis()">Analizar Estructura</button>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="addConcentratedLoad()">Agregar Carga Concentrada</button>
+                    <button class="btn" onclick="calculateStructuralAnalysis()">Analizar Estructura</button>
+                </div>
 
                 <div id="structuralAnalysisResult"></div>
             </div>
@@ -745,69 +966,73 @@
                 </div>
 
                 <h3>Factores de Seguridad por Normativa</h3>
-                <table class="reference-table">
-                    <thead>
-                        <tr>
-                            <th>Tipo de Operación</th>
-                            <th>DS 132</th>
-                            <th>ANSI B30</th>
-                            <th>ISO 4301</th>
-                            <th>Recomendado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Operación Normal</td>
-                            <td>1.25</td>
-                            <td>1.15</td>
-                            <td>1.34</td>
-                            <td>1.5</td>
-                        </tr>
-                        <tr>
-                            <td>Operación Crítica</td>
-                            <td>2.0</td>
-                            <td>1.5</td>
-                            <td>2.0</td>
-                            <td>2.0</td>
-                        </tr>
-                        <tr>
-                            <td>Izaje de Personal</td>
-                            <td>8.0</td>
-                            <td>10.0</td>
-                            <td>8.0</td>
-                            <td>10.0</td>
-                        </tr>
-                        <tr>
-                            <td>Eslingas Textiles</td>
-                            <td>6.0</td>
-                            <td>5.0</td>
-                            <td>6.0</td>
-                            <td>6.0</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="reference-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Operación</th>
+                                <th>DS 132</th>
+                                <th>ANSI B30</th>
+                                <th class="mobile-hidden">ISO 4301</th>
+                                <th>Recomendado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Operación Normal</td>
+                                <td>1.25</td>
+                                <td>1.15</td>
+                                <td class="mobile-hidden">1.34</td>
+                                <td>1.5</td>
+                            </tr>
+                            <tr>
+                                <td>Operación Crítica</td>
+                                <td>2.0</td>
+                                <td>1.5</td>
+                                <td class="mobile-hidden">2.0</td>
+                                <td>2.0</td>
+                            </tr>
+                            <tr>
+                                <td>Izaje de Personal</td>
+                                <td>8.0</td>
+                                <td>10.0</td>
+                                <td class="mobile-hidden">8.0</td>
+                                <td>10.0</td>
+                            </tr>
+                            <tr>
+                                <td>Eslingas Textiles</td>
+                                <td>6.0</td>
+                                <td>5.0</td>
+                                <td class="mobile-hidden">6.0</td>
+                                <td>6.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <h3>Capacidades Típicas de Eslingas (Cable de Acero 6x19)</h3>
-                <table class="reference-table">
-                    <thead>
-                        <tr>
-                            <th>Diámetro (mm)</th>
-                            <th>Carga Trabajo (kg)</th>
-                            <th>Resistencia Rotura (kg)</th>
-                            <th>Peso por metro (kg/m)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>8</td><td>410</td><td>2460</td><td>0.21</td></tr>
-                        <tr><td>10</td><td>640</td><td>3840</td><td>0.33</td></tr>
-                        <tr><td>12</td><td>920</td><td>5520</td><td>0.48</td></tr>
-                        <tr><td>16</td><td>1640</td><td>9840</td><td>0.85</td></tr>
-                        <tr><td>20</td><td>2560</td><td>15360</td><td>1.33</td></tr>
-                        <tr><td>24</td><td>3680</td><td>22080</td><td>1.91</td></tr>
-                        <tr><td>28</td><td>5010</td><td>30060</td><td>2.60</td></tr>
-                        <tr><td>32</td><td>6550</td><td>39300</td><td>3.40</td></tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="reference-table">
+                        <thead>
+                            <tr>
+                                <th>Diámetro (mm)</th>
+                                <th>Carga Trabajo (kg)</th>
+                                <th>Resistencia Rotura (kg)</th>
+                                <th class="mobile-hidden">Peso por metro (kg/m)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>8</td><td>410</td><td>2460</td><td class="mobile-hidden">0.21</td></tr>
+                            <tr><td>10</td><td>640</td><td>3840</td><td class="mobile-hidden">0.33</td></tr>
+                            <tr><td>12</td><td>920</td><td>5520</td><td class="mobile-hidden">0.48</td></tr>
+                            <tr><td>16</td><td>1640</td><td>9840</td><td class="mobile-hidden">0.85</td></tr>
+                            <tr><td>20</td><td>2560</td><td>15360</td><td class="mobile-hidden">1.33</td></tr>
+                            <tr><td>24</td><td>3680</td><td>22080</td><td class="mobile-hidden">1.91</td></tr>
+                            <tr><td>28</td><td>5010</td><td>30060</td><td class="mobile-hidden">2.60</td></tr>
+                            <tr><td>32</td><td>6550</td><td>39300</td><td class="mobile-hidden">3.40</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Reportes Técnicos -->
@@ -836,9 +1061,11 @@
                     </div>
                 </div>
 
-                <button class="btn btn-export" onclick="generateProfessionalPDF('complete')">Generar Reporte PDF Completo</button>
-                <button class="btn btn-secondary" onclick="exportToExcel()">Exportar Datos a Excel</button>
-                <button class="btn" onclick="generateFullReport()">Vista Previa del Reporte</button>
+                <div class="button-group">
+                    <button class="btn btn-export" onclick="generateProfessionalPDF('complete')">Generar Reporte PDF Completo</button>
+                    <button class="btn btn-secondary" onclick="exportToExcel()">Exportar Datos a Excel</button>
+                    <button class="btn" onclick="generateFullReport()">Vista Previa del Reporte</button>
+                </div>
 
                 <div id="reportPreview"></div>
             </div>
@@ -847,13 +1074,13 @@
 
     <!-- Footer con crédito del desarrollador -->
     <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: rgba(255,255,255,0.8); text-align: center; padding: 15px; margin-top: 40px;">
-        <div style="font-size: 0.9em; margin-bottom: 5px;">
+        <div style="font-size: clamp(0.8rem, 2vw, 0.9rem); margin-bottom: 5px;">
             <strong>Sistema de Cálculos de Izaje - Minería Norte Chile</strong>
         </div>
-        <div style="font-size: 0.8em; opacity: 0.9; margin-bottom: 8px;">
+        <div style="font-size: clamp(0.7rem, 1.5vw, 0.8rem); opacity: 0.9; margin-bottom: 8px;">
             Certificado ISO 9001:2015 | Cumple normativas DS 132, ANSI/ASME B30, ISO 4301
         </div>
-        <div style="font-size: 0.75em; opacity: 0.7; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
+        <div style="font-size: clamp(0.6rem, 1.5vw, 0.75rem); opacity: 0.7; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
             Desarrollado por <strong>RaulPivetA.</strong> | © 2025 | Válido para autoridades mineras
         </div>
     </div>
@@ -868,6 +1095,9 @@
         };
 
         function showTab(tabName) {
+            // Trackear cambio de pestaña
+            trackEvent('tab_change', 'Navigation', tabName);
+            
             const tabs = document.querySelectorAll('.tab-content');
             const tabButtons = document.querySelectorAll('.tab');
             
@@ -891,6 +1121,17 @@
                 alert('Complete los campos principales para el análisis');
                 return;
             }
+
+            // Trackear el cálculo
+            trackCalculation('crane_analysis', {
+                loadWeight,
+                radius,
+                height,
+                capacity,
+                safetyFactor,
+                craneType,
+                weather
+            });
 
             // Factores de reducción por condiciones
             let weatherFactor = 1.0;
@@ -925,11 +1166,11 @@
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">Capacidad Efectiva</div>' +
-                        '<div class="result-value">' + effectiveCapacity.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                        '<div class="result-value">' + Math.round(effectiveCapacity).toLocaleString() + '<span class="result-unit">kg</span></div>' +
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">Capacidad Requerida</div>' +
-                        '<div class="result-value">' + requiredCapacity.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                        '<div class="result-value">' + Math.round(requiredCapacity).toLocaleString() + '<span class="result-unit">kg</span></div>' +
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">Utilización</div>' +
@@ -959,26 +1200,28 @@
                         'Capacidad Efectiva = Capacidad Nominal × Factor Climático × Factor Altura' +
                     '</div>' +
                     '<div class="formula">' +
-                        effectiveCapacity.toLocaleString() + ' kg = ' + capacity.toLocaleString() + ' × ' + weatherFactor + ' × ' + heightFactor +
+                        Math.round(effectiveCapacity).toLocaleString() + ' kg = ' + capacity.toLocaleString() + ' × ' + weatherFactor + ' × ' + heightFactor +
                     '</div>' +
                     '<div class="step">' +
                         '<span class="step-number">2.</span>' +
                         'Capacidad Requerida = Peso Carga × Factor Seguridad' +
                     '</div>' +
                     '<div class="formula">' +
-                        requiredCapacity.toLocaleString() + ' kg = ' + loadWeight.toLocaleString() + ' × ' + safetyFactor +
+                        Math.round(requiredCapacity).toLocaleString() + ' kg = ' + loadWeight.toLocaleString() + ' × ' + safetyFactor +
                     '</div>' +
                     '<div class="step">' +
                         '<span class="step-number">3.</span>' +
                         'Utilización = (Cap. Requerida / Cap. Efectiva) × 100' +
                     '</div>' +
                     '<div class="formula">' +
-                        utilizationPercentage.toFixed(1) + '% = (' + requiredCapacity.toLocaleString() + ' / ' + effectiveCapacity.toLocaleString() + ') × 100' +
+                        utilizationPercentage.toFixed(1) + '% = (' + Math.round(requiredCapacity).toLocaleString() + ' / ' + Math.round(effectiveCapacity).toLocaleString() + ') × 100' +
                     '</div>' +
                 '</div>';
 
             // Evaluación de seguridad
+            let safetyStatus = '';
             if (utilizationPercentage <= 75) {
+                safetyStatus = 'OPERACIÓN SEGURA';
                 resultHtml += '<div class="alert alert-success">' +
                     '<span class="alert-icon">✅</span>' +
                     '<div>' +
@@ -988,6 +1231,7 @@
                     '</div>' +
                 '</div>';
             } else if (utilizationPercentage <= 85) {
+                safetyStatus = 'PRECAUCIÓN';
                 resultHtml += '<div class="alert alert-warning">' +
                     '<span class="alert-icon">⚠️</span>' +
                     '<div>' +
@@ -997,6 +1241,7 @@
                     '</div>' +
                 '</div>';
             } else if (utilizationPercentage <= 100) {
+                safetyStatus = 'RIESGO ALTO';
                 resultHtml += '<div class="alert alert-danger">' +
                     '<span class="alert-icon">⚠️</span>' +
                     '<div>' +
@@ -1006,6 +1251,7 @@
                     '</div>' +
                 '</div>';
             } else {
+                safetyStatus = 'OPERACIÓN PROHIBIDA';
                 resultHtml += '<div class="alert alert-danger">' +
                     '<span class="alert-icon">❌</span>' +
                     '<div>' +
@@ -1017,6 +1263,9 @@
             }
 
             resultHtml += '</div>';
+
+            // Trackear resultado del análisis
+            trackEvent('safety_evaluation', 'Crane_Analysis', safetyStatus, utilizationPercentage);
 
             // Guardar resultados para reporte
             analysisResults.crane = {
@@ -1031,7 +1280,8 @@
                 craneType: craneType, 
                 weather: weather, 
                 loadMoment: loadMoment, 
-                stabilityRatio: stabilityRatio
+                stabilityRatio: stabilityRatio,
+                safetyStatus: safetyStatus
             };
 
             document.getElementById('craneAnalysisResult').innerHTML = resultHtml;
@@ -1051,6 +1301,18 @@
                 alert('Complete los campos principales para el análisis');
                 return;
             }
+
+            // Trackear el cálculo
+            trackCalculation('sling_engineering', {
+                weight,
+                legs,
+                angle,
+                diameter,
+                safetyFactor,
+                material,
+                condition,
+                temperature
+            });
 
             // Factores de eficiencia por ángulo
             const angleRad = angle * Math.PI / 180;
@@ -1099,15 +1361,15 @@
                 '<div class="result-grid">' +
                     '<div class="result-item">' +
                         '<div class="result-label">Carga por Ramal</div>' +
-                        '<div class="result-value">' + loadPerLeg.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                        '<div class="result-value">' + Math.round(loadPerLeg).toLocaleString() + '<span class="result-unit">kg</span></div>' +
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">Tensión por Ramal</div>' +
-                        '<div class="result-value">' + tensionPerLeg.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                        '<div class="result-value">' + Math.round(tensionPerLeg).toLocaleString() + '<span class="result-unit">kg</span></div>' +
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">Capacidad de Trabajo</div>' +
-                        '<div class="result-value">' + workingLoad.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                        '<div class="result-value">' + Math.round(workingLoad).toLocaleString() + '<span class="result-unit">kg</span></div>' +
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">Resistencia a Rotura</div>' +
@@ -1137,28 +1399,30 @@
                         'Carga por Ramal = Peso Total / Número de Ramales' +
                     '</div>' +
                     '<div class="formula">' +
-                        loadPerLeg.toLocaleString() + ' kg = ' + weight.toLocaleString() + ' / ' + legs +
+                        Math.round(loadPerLeg).toLocaleString() + ' kg = ' + weight.toLocaleString() + ' / ' + legs +
                     '</div>' +
                     '<div class="step">' +
                         '<span class="step-number">2.</span>' +
                         'Tensión = Carga por Ramal / (sen(α) × Factor Distribución)' +
                     '</div>' +
                     '<div class="formula">' +
-                        tensionPerLeg.toLocaleString() + ' kg = ' + loadPerLeg.toLocaleString() + ' / (' + angleEfficiency.toFixed(3) + ' × ' + distributionFactor + ')' +
+                        Math.round(tensionPerLeg).toLocaleString() + ' kg = ' + Math.round(loadPerLeg).toLocaleString() + ' / (' + angleEfficiency.toFixed(3) + ' × ' + distributionFactor + ')' +
                     '</div>' +
                     '<div class="step">' +
                         '<span class="step-number">3.</span>' +
                         'Capacidad Trabajo = (Resistencia × Factor Condición × Factor Temp.) / Factor Seguridad' +
                     '</div>' +
                     '<div class="formula">' +
-                        workingLoad.toLocaleString() + ' kg = (' + breakingStrength.toLocaleString() + ' × ' + conditionFactor + ' × ' + tempFactor + ') / ' + safetyFactor +
+                        Math.round(workingLoad).toLocaleString() + ' kg = (' + breakingStrength.toLocaleString() + ' × ' + conditionFactor + ' × ' + tempFactor + ') / ' + safetyFactor +
                     '</div>' +
                 '</div>';
 
             // Evaluación de seguridad
             const utilizationSling = (tensionPerLeg / workingLoad) * 100;
+            let slingStatus = '';
 
             if (angle < 30) {
+                slingStatus = 'ÁNGULO CRÍTICO';
                 resultHtml += '<div class="alert alert-danger">' +
                     '<span class="alert-icon">❌</span>' +
                     '<div>' +
@@ -1167,6 +1431,7 @@
                     '</div>' +
                 '</div>';
             } else if (utilizationSling <= 80) {
+                slingStatus = 'CONFIGURACIÓN ÓPTIMA';
                 resultHtml += '<div class="alert alert-success">' +
                     '<span class="alert-icon">✅</span>' +
                     '<div>' +
@@ -1176,6 +1441,7 @@
                     '</div>' +
                 '</div>';
             } else if (utilizationSling <= 95) {
+                slingStatus = 'UTILIZACIÓN ALTA';
                 resultHtml += '<div class="alert alert-warning">' +
                     '<span class="alert-icon">⚠️</span>' +
                     '<div>' +
@@ -1185,6 +1451,7 @@
                     '</div>' +
                 '</div>';
             } else {
+                slingStatus = 'CAPACIDAD INSUFICIENTE';
                 resultHtml += '<div class="alert alert-danger">' +
                     '<span class="alert-icon">❌</span>' +
                     '<div>' +
@@ -1196,6 +1463,9 @@
             }
 
             resultHtml += '</div>';
+
+            // Trackear resultado del análisis
+            trackEvent('safety_evaluation', 'Sling_Analysis', slingStatus, utilizationSling);
 
             // Guardar resultados
             analysisResults.sling = {
@@ -1211,7 +1481,8 @@
                 safetyFactor: safetyFactor,
                 angleEfficiency: angleEfficiency, 
                 distributionFactor: distributionFactor, 
-                contactPressure: contactPressure
+                contactPressure: contactPressure,
+                slingStatus: slingStatus
             };
 
             document.getElementById('slingEngineeringResult').innerHTML = resultHtml;
@@ -1225,6 +1496,9 @@
                 alert('Ingrese la longitud y peso total para el cálculo');
                 return;
             }
+
+            // Trackear uso de la función
+            trackEvent('quick_calculation', 'Structural_Analysis', 'Uniform_Beam');
 
             // Para viga uniforme, CG está en el centro
             const centerOfGravity = totalLength / 2;
@@ -1299,10 +1573,14 @@
                 '<button class="btn btn-secondary" onclick="removeLoad(this)" style="margin-top: 28px;">Eliminar</button>' +
             '</div>';
             container.appendChild(newLoad);
+            
+            // Trackear agregar carga
+            trackEvent('add_concentrated_load', 'Structural_Analysis', 'Load_Added');
         }
 
         function removeLoad(button) {
             button.closest('.load-point').remove();
+            trackEvent('remove_concentrated_load', 'Structural_Analysis', 'Load_Removed');
         }
 
         function calculateStructuralAnalysis() {
@@ -1315,6 +1593,14 @@
                 alert('Complete la longitud y peso total de la estructura');
                 return;
             }
+
+            // Trackear el cálculo
+            trackCalculation('structural_analysis', {
+                totalLength,
+                totalWeight,
+                structureType,
+                manualCG: manualCG || 'automatic'
+            });
 
             const positions = document.querySelectorAll('.load-position');
             const weights = document.querySelectorAll('.load-weight');
@@ -1423,11 +1709,11 @@
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">⚖️ Reacción Punto 1</div>' +
-                        '<div class="result-value">' + reaction1.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                        '<div class="result-value">' + Math.round(reaction1).toLocaleString() + '<span class="result-unit">kg</span></div>' +
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">⚖️ Reacción Punto 2</div>' +
-                        '<div class="result-value">' + reaction2.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                        '<div class="result-value">' + Math.round(reaction2).toLocaleString() + '<span class="result-unit">kg</span></div>' +
                     '</div>' +
                     '<div class="result-item">' +
                         '<div class="result-label">📏 Separación de Puntos</div>' +
@@ -1463,13 +1749,14 @@
                         'Reacciones: R₁ = W×(P₂-CG)/(P₂-P₁) | R₂ = W×(CG-P₁)/(P₂-P₁)' +
                     '</div>' +
                     '<div class="formula">' +
-                        'R₁ = ' + reaction1.toLocaleString() + ' kg | R₂ = ' + reaction2.toLocaleString() + ' kg' +
+                        'R₁ = ' + Math.round(reaction1).toLocaleString() + ' kg | R₂ = ' + Math.round(reaction2).toLocaleString() + ' kg' +
                     '</div>' +
                 '</div>';
 
             // Mostrar tabla de cargas concentradas si existen
             if (loadDetails.length > 0) {
                 resultHtml += '<h4>📋 Detalle de Cargas Concentradas</h4>' +
+                    '<div class="table-responsive">' +
                     '<table class="reference-table">' +
                         '<thead>' +
                             '<tr>' +
@@ -1477,7 +1764,7 @@
                                 '<th>Posición (m)</th>' +
                                 '<th>Peso (kg)</th>' +
                                 '<th>Momento (kg⋅m)</th>' +
-                                '<th>% del Total</th>' +
+                                '<th class="mobile-hidden">% del Total</th>' +
                             '</tr>' +
                         '</thead>' +
                         '<tbody>';
@@ -1489,17 +1776,19 @@
                         '<td>' + load.position.toFixed(2) + '</td>' +
                         '<td>' + load.weight.toLocaleString() + '</td>' +
                         '<td>' + (load.position * load.weight).toLocaleString() + '</td>' +
-                        '<td>' + ((load.weight/totalWeight)*100).toFixed(1) + '%</td>' +
+                        '<td class="mobile-hidden">' + ((load.weight/totalWeight)*100).toFixed(1) + '%</td>' +
                     '</tr>';
                 }
 
-                resultHtml += '</tbody></table>';
+                resultHtml += '</tbody></table></div>';
             }
 
             // Evaluación de la configuración
             const balanceQuality = Math.abs(((reaction1-reaction2)/totalWeight)*100);
+            let structuralStatus = '';
             
             if (balanceQuality <= 5) {
+                structuralStatus = 'CONFIGURACIÓN ÓPTIMA';
                 resultHtml += '<div class="alert alert-success">' +
                     '<span class="alert-icon">✅</span>' +
                     '<div>' +
@@ -1510,6 +1799,7 @@
                     '</div>' +
                 '</div>';
             } else if (balanceQuality <= 10) {
+                structuralStatus = 'CONFIGURACIÓN ACEPTABLE';
                 resultHtml += '<div class="alert alert-warning">' +
                     '<span class="alert-icon">⚠️</span>' +
                     '<div>' +
@@ -1519,6 +1809,7 @@
                     '</div>' +
                 '</div>';
             } else {
+                structuralStatus = 'DESBALANCE CRÍTICO';
                 resultHtml += '<div class="alert alert-danger">' +
                     '<span class="alert-icon">❌</span>' +
                     '<div>' +
@@ -1530,6 +1821,9 @@
             }
 
             resultHtml += '</div>';
+
+            // Trackear resultado del análisis
+            trackEvent('safety_evaluation', 'Structural_Analysis', structuralStatus, balanceQuality);
 
             // Guardar resultados
             analysisResults.structural = {
@@ -1545,7 +1839,8 @@
                 loadDetails: loadDetails,
                 structureType: structureType,
                 calculationMethod: calculationMethod,
-                balanceQuality: balanceQuality
+                balanceQuality: balanceQuality,
+                structuralStatus: structuralStatus
             };
 
             document.getElementById('structuralAnalysisResult').innerHTML = resultHtml;
@@ -1563,6 +1858,16 @@
                 alert('Complete los datos básicos de la grúa');
                 return;
             }
+
+            // Trackear el cálculo
+            trackCalculation('stability_analysis', {
+                base,
+                craneWeight,
+                cgHeight,
+                windSpeed,
+                windArea,
+                shapeCoeff
+            });
 
             // Cálculo de presión de viento (según normativa)
             const windPressure = 0.613 * Math.pow(windSpeed/3.6, 2); // Pa
@@ -1610,7 +1915,9 @@
                     'Factor de Estabilidad = Momento Estabilizador / Momento Volcante = ' + stabilityFactor.toFixed(2) +
                 '</div>';
 
+            let stabilityStatus = '';
             if (stabilityFactor >= 2.0) {
+                stabilityStatus = 'ESTABILIDAD EXCELENTE';
                 resultHtml += '<div class="alert alert-success">' +
                     '<span class="alert-icon">✅</span>' +
                     '<div>' +
@@ -1619,6 +1926,7 @@
                     '</div>' +
                 '</div>';
             } else if (stabilityFactor >= 1.5) {
+                stabilityStatus = 'ESTABILIDAD ACEPTABLE';
                 resultHtml += '<div class="alert alert-warning">' +
                     '<span class="alert-icon">⚠️</span>' +
                     '<div>' +
@@ -1627,6 +1935,7 @@
                     '</div>' +
                 '</div>';
             } else {
+                stabilityStatus = 'RIESGO DE VOLCAMIENTO';
                 resultHtml += '<div class="alert alert-danger">' +
                     '<span class="alert-icon">❌</span>' +
                     '<div>' +
@@ -1637,6 +1946,9 @@
             }
 
             resultHtml += '</div>';
+
+            // Trackear resultado del análisis
+            trackEvent('safety_evaluation', 'Stability_Analysis', stabilityStatus, stabilityFactor);
 
             // Guardar resultados
             analysisResults.stability = {
@@ -1649,7 +1961,8 @@
                 windForce: windForce, 
                 windMoment: windMoment, 
                 stabilizingMoment: stabilizingMoment, 
-                stabilityFactor: stabilityFactor
+                stabilityFactor: stabilityFactor,
+                stabilityStatus: stabilityStatus
             };
 
             document.getElementById('stabilityResult').innerHTML = resultHtml;
@@ -1660,6 +1973,9 @@
             const engineerName = document.getElementById('engineerName').value || 'Ingeniero Responsable';
             const companyName = document.getElementById('companyName').value || 'Empresa Minera';
             const operationDate = document.getElementById('operationDate').value || new Date().toISOString().split('T')[0];
+
+            // Trackear generación de reporte
+            trackEvent('report_preview', 'Reports', 'Full_Report_Preview');
 
             let reportHtml = '<div class="result-container">' +
                 '<div class="result-header">' +
@@ -1691,20 +2007,30 @@
                 reportHtml += '<h3>Resumen de Análisis de Grúa</h3>' +
                     '<p><strong>Utilización:</strong> ' + analysisResults.crane.utilizationPercentage.toFixed(1) + '% | ' +
                     '<strong>Factor de Seguridad:</strong> ' + analysisResults.crane.safetyFactor + ' | ' +
-                    '<strong>Capacidad Efectiva:</strong> ' + analysisResults.crane.effectiveCapacity.toLocaleString() + ' kg</p>';
+                    '<strong>Capacidad Efectiva:</strong> ' + Math.round(analysisResults.crane.effectiveCapacity).toLocaleString() + ' kg | ' +
+                    '<strong>Estado:</strong> ' + analysisResults.crane.safetyStatus + '</p>';
             }
 
             if (analysisResults.sling) {
                 reportHtml += '<h3>Resumen de Análisis de Eslingas</h3>' +
-                    '<p><strong>Tensión por Ramal:</strong> ' + analysisResults.sling.tensionPerLeg.toLocaleString() + ' kg | ' +
+                    '<p><strong>Tensión por Ramal:</strong> ' + Math.round(analysisResults.sling.tensionPerLeg).toLocaleString() + ' kg | ' +
                     '<strong>Utilización:</strong> ' + analysisResults.sling.utilizationSling.toFixed(1) + '% | ' +
-                    '<strong>Material:</strong> ' + analysisResults.sling.material + '</p>';
+                    '<strong>Material:</strong> ' + analysisResults.sling.material + ' | ' +
+                    '<strong>Estado:</strong> ' + analysisResults.sling.slingStatus + '</p>';
             }
 
             if (analysisResults.structural) {
                 reportHtml += '<h3>Resumen de Análisis Estructural</h3>' +
                     '<p><strong>Centro de Gravedad:</strong> ' + analysisResults.structural.centerOfGravity.toFixed(2) + ' m | ' +
-                    '<strong>Puntos de Izaje:</strong> ' + analysisResults.structural.liftPoint1.toFixed(2) + ' m - ' + analysisResults.structural.liftPoint2.toFixed(2) + ' m</p>';
+                    '<strong>Puntos de Izaje:</strong> ' + analysisResults.structural.liftPoint1.toFixed(2) + ' m - ' + analysisResults.structural.liftPoint2.toFixed(2) + ' m | ' +
+                    '<strong>Estado:</strong> ' + analysisResults.structural.structuralStatus + '</p>';
+            }
+
+            if (analysisResults.stability) {
+                reportHtml += '<h3>Resumen de Análisis de Estabilidad</h3>' +
+                    '<p><strong>Factor de Estabilidad:</strong> ' + analysisResults.stability.stabilityFactor.toFixed(2) + ' | ' +
+                    '<strong>Velocidad de Viento:</strong> ' + analysisResults.stability.windSpeed + ' km/h | ' +
+                    '<strong>Estado:</strong> ' + analysisResults.stability.stabilityStatus + '</p>';
             }
 
             reportHtml += '<div class="alert alert-success">' +
@@ -1712,7 +2038,8 @@
                 '<div>' +
                     '<strong>REPORTE GENERADO EXITOSAMENTE</strong><br>' +
                     'Este reporte cumple con las normativas DS 132, ANSI B30 e ISO 4301. ' +
-                    'Válido para presentación a autoridades mineras.' +
+                    'Válido para presentación a autoridades mineras.<br>' +
+                    'Desarrollado por <strong>RaulPivetA.</strong>' +
                 '</div>' +
             '</div>' +
         '</div>';
@@ -1726,6 +2053,9 @@
             document.getElementById('liftHeight').value = '';
             document.getElementById('craneCapacityNominal').value = '';
             document.getElementById('craneAnalysisResult').innerHTML = '';
+            
+            // Trackear limpieza de datos
+            trackEvent('clear_inputs', 'Data_Management', 'Crane_Inputs_Cleared');
         }
 
         function generateSlingReport() {
@@ -1748,12 +2078,25 @@
                 return;
             }
 
+            // Trackear inicio de generación PDF
+            trackExport('professional_report', 'PDF');
+
             // Cargar jsPDF dinámicamente
             if (typeof window.jsPDF === 'undefined') {
+                // Mostrar indicador de carga
+                const loadingHtml = '<div class="alert alert-warning">' +
+                    '<span class="alert-icon"><div class="loading"></div></span>' +
+                    '<div><strong>Generando reporte PDF...</strong><br>Cargando librerías necesarias, por favor espere.</div>' +
+                '</div>';
+                document.getElementById('reportPreview').innerHTML = loadingHtml;
+
                 const script = document.createElement('script');
                 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
                 script.onload = function() {
                     setTimeout(() => generatePDFContent(reportType), 100);
+                };
+                script.onerror = function() {
+                    alert('Error al cargar la librería PDF. Verifique su conexión a internet.');
                 };
                 document.head.appendChild(script);
             } else {
@@ -1762,358 +2105,353 @@
         }
 
         function generatePDFContent(reportType) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-            
-            // Configuración del documento
-            const pageWidth = 210;
-            const pageHeight = 297;
-            const margin = 15;
-            const contentWidth = pageWidth - (margin * 2);
-            const footerHeight = 25; // Espacio reservado para footer
-            const usableHeight = pageHeight - footerHeight; // Altura útil de la página
-            let yPosition = margin;
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                
+                // Configuración del documento
+                const pageWidth = 210;
+                const pageHeight = 297;
+                const margin = 15;
+                const contentWidth = pageWidth - (margin * 2);
+                const footerHeight = 25;
+                const usableHeight = pageHeight - footerHeight;
+                let yPosition = margin;
 
-            // Colores corporativos
-            const primaryColor = [231, 76, 60];  // Rojo minero
-            const secondaryColor = [44, 62, 80]; // Azul oscuro
-            const accentColor = [149, 165, 166]; // Gris
+                // Colores corporativos
+                const primaryColor = [231, 76, 60];
+                const secondaryColor = [44, 62, 80];
+                const accentColor = [149, 165, 166];
 
-            // HEADER CORPORATIVO - Más compacto
-            doc.setFillColor(...primaryColor);
-            doc.rect(0, 0, pageWidth, 32, 'F');
-            
-            // Logo y título principal
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.setFont('helvetica', 'bold');
-            doc.text('⛏️ SISTEMA DE CÁLCULOS DE IZAJE', margin, 11);
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Minería Norte de Chile - Análisis Profesional de Operaciones de Carga', margin, 20);
-            doc.text('Certificado ISO 9001:2015 | Cumple DS 132, ANSI B30, ISO 4301', margin, 27);
-
-            // Línea decorativa
-            doc.setDrawColor(...secondaryColor);
-            doc.setLineWidth(1);
-            doc.line(0, 32, pageWidth, 32);
-            
-            yPosition = 38;
-
-            // INFORMACIÓN DEL PROYECTO - Más compacta y sin desbordamiento
-            doc.setTextColor(...secondaryColor);
-            doc.setFontSize(13);
-            doc.setFont('helvetica', 'bold');
-            doc.text('REPORTE TÉCNICO DE OPERACIÓN DE IZAJE', margin, yPosition);
-            yPosition += 5;
-
-            // Cuadro de información del proyecto - PERFECTAMENTE AJUSTADO
-            const projectBoxHeight = 18; // Más pequeño aún
-            doc.setDrawColor(...accentColor);
-            doc.setLineWidth(0.5);
-            doc.rect(margin, yPosition, contentWidth, projectBoxHeight);
-            
-            doc.setFillColor(248, 249, 250);
-            doc.rect(margin, yPosition, contentWidth, 3.5, 'F'); // Header muy pequeño
-            
-            doc.setTextColor(...primaryColor);
-            doc.setFontSize(7);
-            doc.setFont('helvetica', 'bold');
-            doc.text('INFORMACIÓN DEL PROYECTO', margin + 2, yPosition + 2.5);
-            
-            yPosition += 5; // Espacio mínimo
-            doc.setTextColor(0, 0, 0);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7);
-            
-            const projectName = document.getElementById('projectName').value || 'Proyecto de Izaje Minero';
-            const engineerName = document.getElementById('engineerName').value || 'Ingeniero Responsable';
-            const companyName = document.getElementById('companyName').value || 'Empresa Minera Norte';
-            const operationDate = document.getElementById('operationDate').value || new Date().toISOString().split('T')[0];
-            
-            // Primera fila
-            doc.text('Proyecto:', margin + 2, yPosition);
-            doc.setFont('helvetica', 'bold');
-            const shortProjectName = projectName.length > 30 ? projectName.substring(0, 27) + '...' : projectName;
-            doc.text(shortProjectName, margin + 17, yPosition);
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text('Empresa:', margin + 95, yPosition);
-            doc.setFont('helvetica', 'bold');
-            const shortCompanyName = companyName.length > 24 ? companyName.substring(0, 21) + '...' : companyName;
-            doc.text(shortCompanyName, margin + 108, yPosition);
-            yPosition += 3;
-            
-            // Segunda fila
-            doc.setFont('helvetica', 'normal');
-            doc.text('Ingeniero:', margin + 2, yPosition);
-            doc.setFont('helvetica', 'bold');
-            const shortEngineerName = engineerName.length > 28 ? engineerName.substring(0, 25) + '...' : engineerName;
-            doc.text(shortEngineerName, margin + 17, yPosition);
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text('Fecha:', margin + 95, yPosition);
-            doc.setFont('helvetica', 'bold');
-            doc.text(new Date(operationDate).toLocaleDateString('es-ES'), margin + 105, yPosition);
-            yPosition += 3;
-            
-            // Tercera fila
-            doc.setFont('helvetica', 'normal');
-            doc.text('Generado:', margin + 2, yPosition);
-            doc.setFont('helvetica', 'bold');
-            doc.text(new Date().toLocaleDateString('es-ES') + ' ' + new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}), margin + 17, yPosition);
-            
-            // Crédito del desarrollador - PERFECTAMENTE POSICIONADO
-            doc.setFont('helvetica', 'italic');
-            doc.setFontSize(6);
-            doc.setTextColor(100, 100, 100);
-            doc.text('Desarrollado por: RaulPivetA.', margin + 95, yPosition);
-            
-            yPosition += 10;
-
-            // RESUMEN EJECUTIVO - Control estricto de altura
-            if (yPosition > usableHeight - 50) {
-                doc.addPage();
-                yPosition = margin + 10;
-            }
-
-            doc.setTextColor(...primaryColor);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('RESUMEN EJECUTIVO', margin, yPosition);
-            yPosition += 5;
-
-            let analysisCount = 0;
-            let safetySummary = [];
-
-            // Análisis de Grúa - Formato ultra compacto
-            if (analysisResults.crane) {
-                analysisCount++;
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(9);
+                // HEADER CORPORATIVO
+                doc.setFillColor(...primaryColor);
+                doc.rect(0, 0, pageWidth, 32, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(20);
                 doc.setFont('helvetica', 'bold');
-                doc.text('• Análisis de Capacidad de Grúa:', margin + 2, yPosition);
-                yPosition += 3.5;
+                doc.text('⛏️ SISTEMA DE CÁLCULOS DE IZAJE', margin, 11);
                 
+                doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8);
-                const craneText = '  Utilización: ' + analysisResults.crane.utilizationPercentage.toFixed(1) + '% | ' +
-                    'Factor Seguridad: ' + analysisResults.crane.safetyFactor + ' | ' +
-                    'Capacidad Efectiva: ' + analysisResults.crane.effectiveCapacity.toLocaleString() + ' kg';
-                doc.text(craneText, margin + 2, yPosition);
-                yPosition += 3.5;
-                
-                // Estado de seguridad
-                if (analysisResults.crane.utilizationPercentage <= 75) {
-                    safetySummary.push('Grúa: OPERACIÓN SEGURA');
-                    doc.setTextColor(21, 87, 36);
-                } else if (analysisResults.crane.utilizationPercentage <= 85) {
-                    safetySummary.push('Grúa: PRECAUCIÓN');
-                    doc.setTextColor(133, 100, 4);
-                } else {
-                    safetySummary.push('Grúa: RIESGO ALTO');
-                    doc.setTextColor(114, 28, 36);
-                }
-                doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
-                yPosition += 5;
-            }
+                doc.text('Minería Norte de Chile - Análisis Profesional de Operaciones de Carga', margin, 20);
+                doc.text('Certificado ISO 9001:2015 | Cumple DS 132, ANSI B30, ISO 4301', margin, 27);
 
-            // Análisis de Eslingas - Formato ultra compacto
-            if (analysisResults.sling) {
-                if (yPosition > usableHeight - 30) {
-                    doc.addPage();
-                    yPosition = margin + 10;
-                }
+                doc.setDrawColor(...secondaryColor);
+                doc.setLineWidth(1);
+                doc.line(0, 32, pageWidth, 32);
                 
-                analysisCount++;
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(9);
+                yPosition = 38;
+
+                // INFORMACIÓN DEL PROYECTO
+                doc.setTextColor(...secondaryColor);
+                doc.setFontSize(13);
                 doc.setFont('helvetica', 'bold');
-                doc.text('• Ingeniería de Eslingas:', margin + 2, yPosition);
-                yPosition += 3.5;
-                
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8);
-                const slingText = '  Tensión por Ramal: ' + analysisResults.sling.tensionPerLeg.toLocaleString() + ' kg | ' +
-                    'Utilización: ' + analysisResults.sling.utilizationSling.toFixed(1) + '% | ' +
-                    'Material: ' + analysisResults.sling.material;
-                doc.text(slingText, margin + 2, yPosition);
-                yPosition += 3.5;
-                
-                // Estado de seguridad eslingas
-                if (analysisResults.sling.angle < 30) {
-                    safetySummary.push('Eslingas: ÁNGULO CRÍTICO');
-                    doc.setTextColor(114, 28, 36);
-                } else if (analysisResults.sling.utilizationSling <= 80) {
-                    safetySummary.push('Eslingas: CONFIGURACIÓN ÓPTIMA');
-                    doc.setTextColor(21, 87, 36);
-                } else if (analysisResults.sling.utilizationSling <= 95) {
-                    safetySummary.push('Eslingas: UTILIZACIÓN ALTA');
-                    doc.setTextColor(133, 100, 4);
-                } else {
-                    safetySummary.push('Eslingas: CAPACIDAD INSUFICIENTE');
-                    doc.setTextColor(114, 28, 36);
-                }
-                doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
+                doc.text('REPORTE TÉCNICO DE OPERACIÓN DE IZAJE', margin, yPosition);
                 yPosition += 5;
-            }
 
-            // Análisis Estructural - Formato ultra compacto
-            if (analysisResults.structural) {
-                if (yPosition > usableHeight - 30) {
-                    doc.addPage();
-                    yPosition = margin + 10;
-                }
-                
-                analysisCount++;
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'bold');
-                doc.text('• Centro de Gravedad y Estructura:', margin + 2, yPosition);
-                yPosition += 3.5;
-                
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8);
-                const structText = '  Centro de Gravedad: ' + analysisResults.structural.centerOfGravity.toFixed(2) + ' m | ' +
-                    'Puntos de Izaje: ' + analysisResults.structural.liftPoint1.toFixed(2) + 'm - ' + analysisResults.structural.liftPoint2.toFixed(2) + 'm';
-                doc.text(structText, margin + 2, yPosition);
-                yPosition += 3.5;
-                
-                // Balance de cargas
-                if (analysisResults.structural.balanceQuality <= 5) {
-                    safetySummary.push('Estructura: BALANCE ÓPTIMO');
-                    doc.setTextColor(21, 87, 36);
-                } else if (analysisResults.structural.balanceQuality <= 10) {
-                    safetySummary.push('Estructura: BALANCE ACEPTABLE');
-                    doc.setTextColor(133, 100, 4);
-                } else {
-                    safetySummary.push('Estructura: DESBALANCE CRÍTICO');
-                    doc.setTextColor(114, 28, 36);
-                }
-                doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
-                yPosition += 5;
-            }
-
-            // CONCLUSIÓN GENERAL - Más destacada y controlada
-            if (yPosition > usableHeight - 25) {
-                doc.addPage();
-                yPosition = margin + 10;
-            }
-            
-            yPosition += 2;
-            doc.setTextColor(...primaryColor);
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('CONCLUSIÓN GENERAL:', margin, yPosition);
-            yPosition += 5;
-
-            // Determinar estado general
-            let generalStatus = 'OPERACIÓN AUTORIZADA';
-            let statusColor = [21, 87, 36];
-            
-            if (safetySummary.some(s => s.includes('CRÍTICO') || s.includes('INSUFICIENTE') || s.includes('RIESGO ALTO'))) {
-                generalStatus = 'OPERACIÓN PROHIBIDA - REVISAR PARÁMETROS';
-                statusColor = [114, 28, 36];
-            } else if (safetySummary.some(s => s.includes('PRECAUCIÓN') || s.includes('ALTA'))) {
-                generalStatus = 'OPERACIÓN CONDICIONAL - SUPERVISIÓN REQUERIDA';
-                statusColor = [133, 100, 4];
-            }
-
-            // Cuadro de conclusión compacto
-            doc.setFillColor(...statusColor);
-            doc.rect(margin, yPosition - 1, contentWidth, 6, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('✓ ' + generalStatus, margin + 2, yPosition + 2.5);
-            yPosition += 10;
-
-            // Nueva página para detalles técnicos
-            if (yPosition > usableHeight - 40) {
-                doc.addPage();
-                yPosition = margin + 10;
-            }
-
-            // DETALLES TÉCNICOS COMPLETOS
-            doc.setTextColor(...secondaryColor);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('DETALLES TÉCNICOS COMPLETOS', margin, yPosition);
-            yPosition += 6;
-
-            // Agregar cada análisis detallado con control estricto de espacio
-            if (analysisResults.crane) {
-                yPosition = addCraneDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
-            }
-
-            if (analysisResults.sling) {
-                if (yPosition > usableHeight - 50) {
-                    doc.addPage();
-                    yPosition = margin + 10;
-                }
-                yPosition = addSlingDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
-            }
-
-            if (analysisResults.structural) {
-                if (yPosition > usableHeight - 50) {
-                    doc.addPage();
-                    yPosition = margin + 10;
-                }
-                yPosition = addStructuralDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
-            }
-
-            // FOOTER EN TODAS LAS PÁGINAS - MEJORADO
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                doc.setPage(i);
-                
-                // Línea footer - posición fija desde el final
-                const footerY = pageHeight - 18;
+                const projectBoxHeight = 18;
                 doc.setDrawColor(...accentColor);
-                doc.setLineWidth(0.3);
-                doc.line(margin, footerY, pageWidth - margin, footerY);
+                doc.setLineWidth(0.5);
+                doc.rect(margin, yPosition, contentWidth, projectBoxHeight);
                 
-                // Texto footer principal
-                doc.setTextColor(...accentColor);
-                doc.setFontSize(6);
-                doc.setFont('helvetica', 'normal');
-                doc.text('Sistema de Cálculos de Izaje - Minería Norte Chile | Certificado ISO 9001:2015', margin, footerY + 3);
+                doc.setFillColor(248, 249, 250);
+                doc.rect(margin, yPosition, contentWidth, 3.5, 'F');
                 
-                // Segunda línea con normativas y página
-                doc.text('Cumple normativas DS 132, ANSI/ASME B30, ISO 4301 | Página ' + i + ' de ' + totalPages, margin, footerY + 6);
-                
-                // Tercera línea con fecha y validez
-                doc.text('Generado: ' + new Date().toLocaleString('es-ES') + ' | Válido para autoridades mineras', margin, footerY + 9);
-                
-                // Crédito del desarrollador - MÁS VISIBLE y mejor posicionado
-                doc.setFontSize(6);
-                doc.setTextColor(80, 80, 80); // Más oscuro para mejor visibilidad
+                doc.setTextColor(...primaryColor);
+                doc.setFontSize(7);
                 doc.setFont('helvetica', 'bold');
-                doc.text('Desarrollado por: RaulPivetA.', margin, footerY + 12);
+                doc.text('INFORMACIÓN DEL PROYECTO', margin + 2, yPosition + 2.5);
                 
-                // Copyright
+                yPosition += 5;
+                doc.setTextColor(0, 0, 0);
                 doc.setFont('helvetica', 'normal');
-                doc.setFontSize(5);
-                doc.setTextColor(120, 120, 120);
-                doc.text('© 2025', margin + 55, footerY + 12);
+                doc.setFontSize(7);
+                
+                const projectName = document.getElementById('projectName').value || 'Proyecto de Izaje Minero';
+                const engineerName = document.getElementById('engineerName').value || 'Ingeniero Responsable';
+                const companyName = document.getElementById('companyName').value || 'Empresa Minera Norte';
+                const operationDate = document.getElementById('operationDate').value || new Date().toISOString().split('T')[0];
+                
+                // Primera fila
+                doc.text('Proyecto:', margin + 2, yPosition);
+                doc.setFont('helvetica', 'bold');
+                const shortProjectName = projectName.length > 30 ? projectName.substring(0, 27) + '...' : projectName;
+                doc.text(shortProjectName, margin + 17, yPosition);
+                
+                doc.setFont('helvetica', 'normal');
+                doc.text('Empresa:', margin + 95, yPosition);
+                doc.setFont('helvetica', 'bold');
+                const shortCompanyName = companyName.length > 24 ? companyName.substring(0, 21) + '...' : companyName;
+                doc.text(shortCompanyName, margin + 108, yPosition);
+                yPosition += 3;
+                
+                // Segunda fila
+                doc.setFont('helvetica', 'normal');
+                doc.text('Ingeniero:', margin + 2, yPosition);
+                doc.setFont('helvetica', 'bold');
+                const shortEngineerName = engineerName.length > 28 ? engineerName.substring(0, 25) + '...' : engineerName;
+                doc.text(shortEngineerName, margin + 17, yPosition);
+                
+                doc.setFont('helvetica', 'normal');
+                doc.text('Fecha:', margin + 95, yPosition);
+                doc.setFont('helvetica', 'bold');
+                doc.text(new Date(operationDate).toLocaleDateString('es-ES'), margin + 105, yPosition);
+                yPosition += 3;
+                
+                // Tercera fila
+                doc.setFont('helvetica', 'normal');
+                doc.text('Generado:', margin + 2, yPosition);
+                doc.setFont('helvetica', 'bold');
+                doc.text(new Date().toLocaleDateString('es-ES') + ' ' + new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}), margin + 17, yPosition);
+                
+                doc.setFont('helvetica', 'italic');
+                doc.setFontSize(6);
+                doc.setTextColor(100, 100, 100);
+                doc.text('Desarrollado por: RaulPivetA.', margin + 95, yPosition);
+                
+                yPosition += 10;
+
+                // RESUMEN EJECUTIVO
+                if (yPosition > usableHeight - 50) {
+                    doc.addPage();
+                    yPosition = margin + 10;
+                }
+
+                doc.setTextColor(...primaryColor);
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('RESUMEN EJECUTIVO', margin, yPosition);
+                yPosition += 5;
+
+                let analysisCount = 0;
+                let safetySummary = [];
+
+                // Análisis de Grúa
+                if (analysisResults.crane) {
+                    analysisCount++;
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('• Análisis de Capacidad de Grúa:', margin + 2, yPosition);
+                    yPosition += 3.5;
+                    
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8);
+                    const craneText = '  Utilización: ' + analysisResults.crane.utilizationPercentage.toFixed(1) + '% | ' +
+                        'Factor Seguridad: ' + analysisResults.crane.safetyFactor + ' | ' +
+                        'Capacidad Efectiva: ' + Math.round(analysisResults.crane.effectiveCapacity).toLocaleString() + ' kg';
+                    doc.text(craneText, margin + 2, yPosition);
+                    yPosition += 3.5;
+                    
+                    if (analysisResults.crane.utilizationPercentage <= 75) {
+                        safetySummary.push('Grúa: OPERACIÓN SEGURA');
+                        doc.setTextColor(21, 87, 36);
+                    } else if (analysisResults.crane.utilizationPercentage <= 85) {
+                        safetySummary.push('Grúa: PRECAUCIÓN');
+                        doc.setTextColor(133, 100, 4);
+                    } else {
+                        safetySummary.push('Grúa: RIESGO ALTO');
+                        doc.setTextColor(114, 28, 36);
+                    }
+                    doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
+                    yPosition += 5;
+                }
+
+                // Análisis de Eslingas
+                if (analysisResults.sling) {
+                    if (yPosition > usableHeight - 30) {
+                        doc.addPage();
+                        yPosition = margin + 10;
+                    }
+                    
+                    analysisCount++;
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('• Ingeniería de Eslingas:', margin + 2, yPosition);
+                    yPosition += 3.5;
+                    
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8);
+                    const slingText = '  Tensión por Ramal: ' + Math.round(analysisResults.sling.tensionPerLeg).toLocaleString() + ' kg | ' +
+                        'Utilización: ' + analysisResults.sling.utilizationSling.toFixed(1) + '% | ' +
+                        'Material: ' + analysisResults.sling.material;
+                    doc.text(slingText, margin + 2, yPosition);
+                    yPosition += 3.5;
+                    
+                    if (analysisResults.sling.angle < 30) {
+                        safetySummary.push('Eslingas: ÁNGULO CRÍTICO');
+                        doc.setTextColor(114, 28, 36);
+                    } else if (analysisResults.sling.utilizationSling <= 80) {
+                        safetySummary.push('Eslingas: CONFIGURACIÓN ÓPTIMA');
+                        doc.setTextColor(21, 87, 36);
+                    } else if (analysisResults.sling.utilizationSling <= 95) {
+                        safetySummary.push('Eslingas: UTILIZACIÓN ALTA');
+                        doc.setTextColor(133, 100, 4);
+                    } else {
+                        safetySummary.push('Eslingas: CAPACIDAD INSUFICIENTE');
+                        doc.setTextColor(114, 28, 36);
+                    }
+                    doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
+                    yPosition += 5;
+                }
+
+                // Análisis Estructural
+                if (analysisResults.structural) {
+                    if (yPosition > usableHeight - 30) {
+                        doc.addPage();
+                        yPosition = margin + 10;
+                    }
+                    
+                    analysisCount++;
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('• Centro de Gravedad y Estructura:', margin + 2, yPosition);
+                    yPosition += 3.5;
+                    
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8);
+                    const structText = '  Centro de Gravedad: ' + analysisResults.structural.centerOfGravity.toFixed(2) + ' m | ' +
+                        'Puntos de Izaje: ' + analysisResults.structural.liftPoint1.toFixed(2) + 'm - ' + analysisResults.structural.liftPoint2.toFixed(2) + 'm';
+                    doc.text(structText, margin + 2, yPosition);
+                    yPosition += 3.5;
+                    
+                    if (analysisResults.structural.balanceQuality <= 5) {
+                        safetySummary.push('Estructura: BALANCE ÓPTIMO');
+                        doc.setTextColor(21, 87, 36);
+                    } else if (analysisResults.structural.balanceQuality <= 10) {
+                        safetySummary.push('Estructura: BALANCE ACEPTABLE');
+                        doc.setTextColor(133, 100, 4);
+                    } else {
+                        safetySummary.push('Estructura: DESBALANCE CRÍTICO');
+                        doc.setTextColor(114, 28, 36);
+                    }
+                    doc.text('  Estado: ' + safetySummary[safetySummary.length - 1], margin + 2, yPosition);
+                    yPosition += 5;
+                }
+
+                // CONCLUSIÓN GENERAL
+                if (yPosition > usableHeight - 25) {
+                    doc.addPage();
+                    yPosition = margin + 10;
+                }
+                
+                yPosition += 2;
+                doc.setTextColor(...primaryColor);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('CONCLUSIÓN GENERAL:', margin, yPosition);
+                yPosition += 5;
+
+                let generalStatus = 'OPERACIÓN AUTORIZADA';
+                let statusColor = [21, 87, 36];
+                
+                if (safetySummary.some(s => s.includes('CRÍTICO') || s.includes('INSUFICIENTE') || s.includes('RIESGO ALTO'))) {
+                    generalStatus = 'OPERACIÓN PROHIBIDA - REVISAR PARÁMETROS';
+                    statusColor = [114, 28, 36];
+                } else if (safetySummary.some(s => s.includes('PRECAUCIÓN') || s.includes('ALTA'))) {
+                    generalStatus = 'OPERACIÓN CONDICIONAL - SUPERVISIÓN REQUERIDA';
+                    statusColor = [133, 100, 4];
+                }
+
+                doc.setFillColor(...statusColor);
+                doc.rect(margin, yPosition - 1, contentWidth, 6, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('✓ ' + generalStatus, margin + 2, yPosition + 2.5);
+                yPosition += 10;
+
+                // Nueva página para detalles técnicos
+                if (yPosition > usableHeight - 40) {
+                    doc.addPage();
+                    yPosition = margin + 10;
+                }
+
+                // DETALLES TÉCNICOS COMPLETOS
+                doc.setTextColor(...secondaryColor);
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('DETALLES TÉCNICOS COMPLETOS', margin, yPosition);
+                yPosition += 6;
+
+                // Agregar cada análisis detallado
+                if (analysisResults.crane) {
+                    yPosition = addCraneDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
+                }
+
+                if (analysisResults.sling) {
+                    if (yPosition > usableHeight - 50) {
+                        doc.addPage();
+                        yPosition = margin + 10;
+                    }
+                    yPosition = addSlingDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
+                }
+
+                if (analysisResults.structural) {
+                    if (yPosition > usableHeight - 50) {
+                        doc.addPage();
+                        yPosition = margin + 10;
+                    }
+                    yPosition = addStructuralDetailsToPage(doc, yPosition, margin, contentWidth, primaryColor, secondaryColor, usableHeight);
+                }
+
+                // FOOTER EN TODAS LAS PÁGINAS
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    
+                    const footerY = pageHeight - 18;
+                    doc.setDrawColor(...accentColor);
+                    doc.setLineWidth(0.3);
+                    doc.line(margin, footerY, pageWidth - margin, footerY);
+                    
+                    doc.setTextColor(...accentColor);
+                    doc.setFontSize(6);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text('Sistema de Cálculos de Izaje - Minería Norte Chile | Certificado ISO 9001:2015', margin, footerY + 3);
+                    
+                    doc.text('Cumple normativas DS 132, ANSI/ASME B30, ISO 4301 | Página ' + i + ' de ' + totalPages, margin, footerY + 6);
+                    
+                    doc.text('Generado: ' + new Date().toLocaleString('es-ES') + ' | Válido para autoridades mineras', margin, footerY + 9);
+                    
+                    doc.setFontSize(6);
+                    doc.setTextColor(80, 80, 80);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Desarrollado por: RaulPivetA.', margin, footerY + 12);
+                    
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(5);
+                    doc.setTextColor(120, 120, 120);
+                    doc.text('© 2025', margin + 55, footerY + 12);
+                }
+
+                // Generar nombre del archivo
+                const fileName = 'Reporte_Izaje_' + (projectName.replace(/\s+/g, '_')) + '_' + 
+                    new Date().toISOString().split('T')[0] + '.pdf';
+
+                // Guardar PDF
+                doc.save(fileName);
+                
+                // Trackear éxito de exportación
+                trackEvent('export_success', 'PDF_Export', fileName, analysisCount);
+                
+                // Mostrar mensaje de éxito
+                alert('✅ Reporte PDF generado exitosamente!\n\n' +
+                    '📄 Archivo: ' + fileName + '\n' +
+                    '📊 Análisis incluidos: ' + analysisCount + '\n' +
+                    '🎯 Estado general: ' + generalStatus + '\n\n' +
+                    '👨‍💻 Desarrollado por: RaulPivetA.\n' +
+                    '🏆 Cumple estándares profesionales para autoridades mineras.\n' +
+                    '📋 Válido según normativas DS 132, ANSI B30, ISO 4301');
+
+            } catch (error) {
+                console.error('Error generando PDF:', error);
+                alert('❌ Error al generar el PDF. Por favor, intente nuevamente.\n\nDetalle del error: ' + error.message);
+                trackEvent('export_error', 'PDF_Export', error.message);
             }
-
-            // Generar nombre del archivo
-            const fileName = 'Reporte_Izaje_' + (projectName.replace(/\s+/g, '_')) + '_' + 
-                new Date().toISOString().split('T')[0] + '.pdf';
-
-            // Guardar PDF
-            doc.save(fileName);
-            
-            // Mostrar mensaje de éxito
-            alert('✅ Reporte PDF generado exitosamente!\n\n' +
-                '📄 Archivo: ' + fileName + '\n' +
-                '📊 Análisis incluidos: ' + analysisCount + '\n' +
-                '🎯 Estado general: ' + generalStatus + '\n\n' +
-                '👨‍💻 Desarrollado por: RaulPivetA.\n' +
-                '🏆 Cumple estándares profesionales para autoridades mineras.\n' +
-                '📋 Válido según normativas DS 132, ANSI B30, ISO 4301');
         }
 
         function addCraneDetailsToPage(doc, yPos, margin, contentWidth, primaryColor, secondaryColor, usableHeight) {
@@ -2128,7 +2466,6 @@
             doc.text('ANÁLISIS DETALLADO DE GRÚA', margin, yPos);
             yPos += 6;
 
-            // Crear tabla de resultados más compacta
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(8);
             doc.setFont('helvetica', 'normal');
@@ -2138,15 +2475,15 @@
                 ['Peso de Carga', analysisResults.crane.loadWeight.toLocaleString(), 'kg'],
                 ['Radio de Operación', analysisResults.crane.radius.toString(), 'm'],
                 ['Capacidad Nominal', analysisResults.crane.capacity.toLocaleString(), 'kg'],
-                ['Capacidad Efectiva', analysisResults.crane.effectiveCapacity.toLocaleString(), 'kg'],
-                ['Capacidad Requerida', analysisResults.crane.requiredCapacity.toLocaleString(), 'kg'],
+                ['Capacidad Efectiva', Math.round(analysisResults.crane.effectiveCapacity).toLocaleString(), 'kg'],
+                ['Capacidad Requerida', Math.round(analysisResults.crane.requiredCapacity).toLocaleString(), 'kg'],
                 ['Utilización', analysisResults.crane.utilizationPercentage.toFixed(1), '%'],
                 ['Factor de Seguridad', analysisResults.crane.safetyFactor.toString(), '-'],
                 ['Momento de Carga', analysisResults.crane.loadMoment.toLocaleString(), 'kg⋅m'],
                 ['Ratio de Estabilidad', analysisResults.crane.stabilityRatio.toFixed(2), '-']
             ];
 
-            yPos = drawTable(doc, craneData, margin, yPos, contentWidth, primaryColor, 4.5); // Filas más pequeñas
+            yPos = drawTable(doc, craneData, margin, yPos, contentWidth, primaryColor, 4.5);
             return yPos + 6;
         }
 
@@ -2172,9 +2509,9 @@
                 ['Número de Ramales', analysisResults.sling.legs.toString(), '-'],
                 ['Ángulo de Eslinga', analysisResults.sling.angle.toString(), '°'],
                 ['Diámetro', analysisResults.sling.diameter.toString(), 'mm'],
-                ['Carga por Ramal', (analysisResults.sling.weight / analysisResults.sling.legs).toLocaleString(), 'kg'],
-                ['Tensión por Ramal', analysisResults.sling.tensionPerLeg.toLocaleString(), 'kg'],
-                ['Capacidad de Trabajo', analysisResults.sling.workingLoad.toLocaleString(), 'kg'],
+                ['Carga por Ramal', Math.round(analysisResults.sling.weight / analysisResults.sling.legs).toLocaleString(), 'kg'],
+                ['Tensión por Ramal', Math.round(analysisResults.sling.tensionPerLeg).toLocaleString(), 'kg'],
+                ['Capacidad de Trabajo', Math.round(analysisResults.sling.workingLoad).toLocaleString(), 'kg'],
                 ['Resistencia a Rotura', analysisResults.sling.breakingStrength.toLocaleString(), 'kg'],
                 ['Utilización', analysisResults.sling.utilizationSling.toFixed(1), '%'],
                 ['Eficiencia Angular', analysisResults.sling.angleEfficiency.toFixed(3), '-'],
@@ -2210,8 +2547,8 @@
                 ['Peso Distribuido', analysisResults.structural.distributedWeight.toLocaleString(), 'kg'],
                 ['Punto de Izaje 1', analysisResults.structural.liftPoint1.toFixed(3), 'm'],
                 ['Punto de Izaje 2', analysisResults.structural.liftPoint2.toFixed(3), 'm'],
-                ['Reacción Punto 1', analysisResults.structural.reaction1.toLocaleString(), 'kg'],
-                ['Reacción Punto 2', analysisResults.structural.reaction2.toLocaleString(), 'kg'],
+                ['Reacción Punto 1', Math.round(analysisResults.structural.reaction1).toLocaleString(), 'kg'],
+                ['Reacción Punto 2', Math.round(analysisResults.structural.reaction2).toLocaleString(), 'kg'],
                 ['Desbalance', analysisResults.structural.balanceQuality.toFixed(1), '%']
             ];
 
@@ -2267,6 +2604,9 @@
                 return;
             }
 
+            // Trackear exportación Excel
+            trackExport('professional_report', 'Excel');
+
             // Crear datos para Excel
             let excelData = [];
             let currentRow = 0;
@@ -2275,6 +2615,7 @@
             excelData[currentRow++] = ['REPORTE TÉCNICO DE OPERACIÓN DE IZAJE'];
             excelData[currentRow++] = ['Sistema de Cálculos de Izaje - Minería Norte Chile'];
             excelData[currentRow++] = ['Certificado ISO 9001:2015 | Normativas DS 132, ANSI B30, ISO 4301'];
+            excelData[currentRow++] = ['Desarrollado por: RaulPivetA. | © 2025'];
             excelData[currentRow++] = [''];
 
             // Información del proyecto
@@ -2293,10 +2634,11 @@
                 excelData[currentRow++] = ['Peso de Carga', analysisResults.crane.loadWeight, 'kg'];
                 excelData[currentRow++] = ['Radio de Operación', analysisResults.crane.radius, 'm'];
                 excelData[currentRow++] = ['Capacidad Nominal', analysisResults.crane.capacity, 'kg'];
-                excelData[currentRow++] = ['Capacidad Efectiva', analysisResults.crane.effectiveCapacity, 'kg'];
-                excelData[currentRow++] = ['Capacidad Requerida', analysisResults.crane.requiredCapacity, 'kg'];
-                excelData[currentRow++] = ['Utilización (%)', analysisResults.crane.utilizationPercentage, '%'];
+                excelData[currentRow++] = ['Capacidad Efectiva', Math.round(analysisResults.crane.effectiveCapacity), 'kg'];
+                excelData[currentRow++] = ['Capacidad Requerida', Math.round(analysisResults.crane.requiredCapacity), 'kg'];
+                excelData[currentRow++] = ['Utilización (%)', analysisResults.crane.utilizationPercentage.toFixed(1), '%'];
                 excelData[currentRow++] = ['Factor de Seguridad', analysisResults.crane.safetyFactor, '-'];
+                excelData[currentRow++] = ['Estado de Seguridad', analysisResults.crane.safetyStatus, '-'];
                 excelData[currentRow++] = [''];
             }
 
@@ -2307,9 +2649,10 @@
                 excelData[currentRow++] = ['Número de Ramales', analysisResults.sling.legs, '-'];
                 excelData[currentRow++] = ['Ángulo', analysisResults.sling.angle, '°'];
                 excelData[currentRow++] = ['Diámetro', analysisResults.sling.diameter, 'mm'];
-                excelData[currentRow++] = ['Tensión por Ramal', analysisResults.sling.tensionPerLeg, 'kg'];
-                excelData[currentRow++] = ['Capacidad de Trabajo', analysisResults.sling.workingLoad, 'kg'];
-                excelData[currentRow++] = ['Utilización (%)', analysisResults.sling.utilizationSling, '%'];
+                excelData[currentRow++] = ['Tensión por Ramal', Math.round(analysisResults.sling.tensionPerLeg), 'kg'];
+                excelData[currentRow++] = ['Capacidad de Trabajo', Math.round(analysisResults.sling.workingLoad), 'kg'];
+                excelData[currentRow++] = ['Utilización (%)', analysisResults.sling.utilizationSling.toFixed(1), '%'];
+                excelData[currentRow++] = ['Estado de Seguridad', analysisResults.sling.slingStatus, '-'];
                 excelData[currentRow++] = [''];
             }
 
@@ -2318,20 +2661,33 @@
                 excelData[currentRow++] = ['Parámetro', 'Valor', 'Unidad'];
                 excelData[currentRow++] = ['Longitud Total', analysisResults.structural.totalLength, 'm'];
                 excelData[currentRow++] = ['Peso Total', analysisResults.structural.totalWeight, 'kg'];
-                excelData[currentRow++] = ['Centro de Gravedad', analysisResults.structural.centerOfGravity, 'm'];
-                excelData[currentRow++] = ['Punto de Izaje 1', analysisResults.structural.liftPoint1, 'm'];
-                excelData[currentRow++] = ['Punto de Izaje 2', analysisResults.structural.liftPoint2, 'm'];
-                excelData[currentRow++] = ['Reacción 1', analysisResults.structural.reaction1, 'kg'];
-                excelData[currentRow++] = ['Reacción 2', analysisResults.structural.reaction2, 'kg'];
+                excelData[currentRow++] = ['Centro de Gravedad', analysisResults.structural.centerOfGravity.toFixed(3), 'm'];
+                excelData[currentRow++] = ['Punto de Izaje 1', analysisResults.structural.liftPoint1.toFixed(3), 'm'];
+                excelData[currentRow++] = ['Punto de Izaje 2', analysisResults.structural.liftPoint2.toFixed(3), 'm'];
+                excelData[currentRow++] = ['Reacción 1', Math.round(analysisResults.structural.reaction1), 'kg'];
+                excelData[currentRow++] = ['Reacción 2', Math.round(analysisResults.structural.reaction2), 'kg'];
+                excelData[currentRow++] = ['Desbalance (%)', analysisResults.structural.balanceQuality.toFixed(1), '%'];
+                excelData[currentRow++] = ['Estado de Seguridad', analysisResults.structural.structuralStatus, '-'];
                 excelData[currentRow++] = [''];
             }
 
-            // Convertir a CSV
+            if (analysisResults.stability) {
+                excelData[currentRow++] = ['ANÁLISIS DE ESTABILIDAD'];
+                excelData[currentRow++] = ['Parámetro', 'Valor', 'Unidad'];
+                excelData[currentRow++] = ['Base de Apoyo', analysisResults.stability.base, 'm'];
+                excelData[currentRow++] = ['Peso de Grúa', analysisResults.stability.craneWeight, 'kg'];
+                excelData[currentRow++] = ['Velocidad de Viento', analysisResults.stability.windSpeed, 'km/h'];
+                excelData[currentRow++] = ['Factor de Estabilidad', analysisResults.stability.stabilityFactor.toFixed(2), '-'];
+                excelData[currentRow++] = ['Estado de Seguridad', analysisResults.stability.stabilityStatus, '-'];
+                excelData[currentRow++] = [''];
+            }
+
+            // Convertir a CSV mejorado
             let csvContent = '';
             excelData.forEach(row => {
                 csvContent += row.map(cell => {
-                    if (typeof cell === 'string' && cell.includes(',')) {
-                        return '"' + cell + '"';
+                    if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"') || cell.includes('\n'))) {
+                        return '"' + cell.replace(/"/g, '""') + '"';
                     }
                     return cell || '';
                 }).join(',') + '\n';
@@ -2342,20 +2698,86 @@
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', 'Reporte_Izaje_' + 
+            
+            const fileName = 'Reporte_Izaje_' + 
                 (document.getElementById('projectName').value || 'Proyecto').replace(/\s+/g, '_') + 
-                '_' + new Date().toISOString().split('T')[0] + '.csv');
+                '_' + new Date().toISOString().split('T')[0] + '.csv';
+                
+            link.setAttribute('download', fileName);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            URL.revokeObjectURL(url);
 
-            alert('✅ Datos exportados a Excel (CSV)!\n\nEl archivo se ha descargado y puede abrirse en Excel, LibreOffice Calc, o Google Sheets.');
+            // Trackear éxito
+            trackEvent('export_success', 'Excel_Export', fileName);
+
+            alert('✅ Datos exportados a Excel (CSV)!\n\n' + 
+                'Archivo: ' + fileName + '\n' +
+                'El archivo se ha descargado y puede abrirse en Excel, LibreOffice Calc, o Google Sheets.\n\n' +
+                'Desarrollado por: RaulPivetA.');
         }
 
         // Configurar fecha actual por defecto
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('operationDate').value = today;
+            
+            // Trackear inicio de sesión
+            trackEvent('session_start', 'User_Engagement', 'Application_Loaded');
+        });
+
+        // Trackear antes de cerrar la página
+        window.addEventListener('beforeunload', function() {
+            trackEvent('session_end', 'User_Engagement', 'Application_Closed');
+        });
+
+        // Funciones de utilidad para mejor UX
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = '<div class="alert alert-warning">' +
+                    '<span class="alert-icon"><div class="loading"></div></span>' +
+                    '<div><strong>Procesando...</strong><br>Por favor espere mientras se realiza el cálculo.</div>' +
+                '</div>';
+            }
+        }
+
+        function hideLoading(elementId) {
+            const element = document.getElementById(elementId);
+            if (element && element.innerHTML.includes('loading')) {
+                element.innerHTML = '';
+            }
+        }
+
+        // Validación en tiempo real
+        function validateInput(inputElement, min, max, message) {
+            const value = parseFloat(inputElement.value);
+            if (value < min || value > max) {
+                inputElement.setCustomValidity(message);
+                inputElement.style.borderColor = '#e74c3c';
+            } else {
+                inputElement.setCustomValidity('');
+                inputElement.style.borderColor = '#e9ecef';
+            }
+        }
+
+        // Agregar validaciones a inputs críticos
+        document.addEventListener('DOMContentLoaded', function() {
+            const craneLoadWeight = document.getElementById('craneLoadWeight');
+            const slingAngleInput = document.getElementById('slingAngleInput');
+            
+            if (craneLoadWeight) {
+                craneLoadWeight.addEventListener('input', function() {
+                    validateInput(this, 1, 1000000, 'El peso debe estar entre 1 kg y 1,000,000 kg');
+                });
+            }
+            
+            if (slingAngleInput) {
+                slingAngleInput.addEventListener('input', function() {
+                    validateInput(this, 15, 90, 'El ángulo debe estar entre 15° y 90°');
+                });
+            }
         });
     </script>
 </body>
