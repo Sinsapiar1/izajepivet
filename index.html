@@ -445,7 +445,7 @@
         <div class="tabs">
             <button class="tab active" onclick="showTab('crane-analysis')">Análisis de Grúa</button>
             <button class="tab" onclick="showTab('sling-engineering')">Ingeniería de Eslingas</button>
-            <button class="tab" onclick="showTab('structural-analysis')">Análisis Estructural</button>
+            <button class="tab" onclick="showTab('structural-analysis')">Centro de Gravedad</button>
             <button class="tab" onclick="showTab('stability')">Estabilidad y Momento</button>
             <button class="tab" onclick="showTab('standards')">Normativas y Estándares</button>
             <button class="tab" onclick="showTab('reports')">Reportes Técnicos</button>
@@ -592,8 +592,16 @@
             <!-- Análisis Estructural -->
             <div id="structural-analysis" class="tab-content">
                 <div class="section-header">
-                    <div class="section-icon">🏗️</div>
-                    <div class="section-title">Análisis Estructural y Centro de Gravedad</div>
+                    <div class="section-icon">⚖️</div>
+                    <div class="section-title">Centro de Gravedad y Análisis Estructural</div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span class="alert-icon">📐</span>
+                    <div>
+                        <strong>CÁLCULO DE CENTRO DE GRAVEDAD PROFESIONAL</strong><br>
+                        Determina el punto de equilibrio exacto para operaciones de izaje seguras según normativas mineras.
+                    </div>
                 </div>
 
                 <div class="form-grid">
@@ -612,15 +620,30 @@
                             <option value="truss">Estructura Reticulada</option>
                             <option value="equipment">Equipo Industrial</option>
                             <option value="module">Módulo de Planta</option>
+                            <option value="pipe">Tubería/Cañería</option>
+                            <option value="tank">Estanque/Tanque</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Material Principal:</label>
                         <select id="structureMaterial">
-                            <option value="steel">Acero Estructural</option>
-                            <option value="concrete">Hormigón Armado</option>
+                            <option value="steel">Acero Estructural (7850 kg/m³)</option>
+                            <option value="concrete">Hormigón Armado (2400 kg/m³)</option>
+                            <option value="aluminum">Aluminio (2700 kg/m³)</option>
                             <option value="composite">Material Compuesto</option>
                         </select>
+                    </div>
+                </div>
+
+                <h3>🎯 Cálculo Rápido de Centro de Gravedad</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Para Viga Uniforme - Centro automático:</label>
+                        <button class="btn btn-secondary" onclick="calculateUniformBeam()">Calcular CG Uniforme</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Distancia del CG desde extremo izquierdo (m):</label>
+                        <input type="number" id="manualCG" placeholder="Si conoce el CG exacto">
                     </div>
                 </div>
 
@@ -876,128 +899,125 @@
             // Análisis de estabilidad básico
             const stabilityRatio = maxMoment / loadMoment;
 
-            let resultHtml = `
-                <div class="result-container">
-                    <div class="result-header">
-                        <div class="result-title">Análisis Completo de Grúa</div>
-                        <div>${new Date().toLocaleDateString()}</div>
-                    </div>
-                    
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <div class="result-label">Carga a Izar</div>
-                            <div class="result-value">${loadWeight.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Capacidad Efectiva</div>
-                            <div class="result-value">${effectiveCapacity.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Capacidad Requerida</div>
-                            <div class="result-value">${requiredCapacity.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Utilización</div>
-                            <div class="result-value">${utilizationPercentage.toFixed(1)}<span class="result-unit">%</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Momento de Carga</div>
-                            <div class="result-value">${loadMoment.toLocaleString()}<span class="result-unit">kg⋅m</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Radio de Operación</div>
-                            <div class="result-value">${radius}<span class="result-unit">m</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Factor de Seguridad</div>
-                            <div class="result-value">${safetyFactor}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Ratio de Estabilidad</div>
-                            <div class="result-value">${stabilityRatio.toFixed(2)}</div>
-                        </div>
-                    </div>
-
-                    <div class="calculation-steps">
-                        <h4>Pasos de Cálculo</h4>
-                        <div class="step">
-                            <span class="step-number">1.</span>
-                            Capacidad Efectiva = Capacidad Nominal × Factor Climático × Factor Altura
-                        </div>
-                        <div class="formula">
-                            ${effectiveCapacity.toLocaleString()} kg = ${capacity.toLocaleString()} × ${weatherFactor} × ${heightFactor}
-                        </div>
-                        <div class="step">
-                            <span class="step-number">2.</span>
-                            Capacidad Requerida = Peso Carga × Factor Seguridad
-                        </div>
-                        <div class="formula">
-                            ${requiredCapacity.toLocaleString()} kg = ${loadWeight.toLocaleString()} × ${safetyFactor}
-                        </div>
-                        <div class="step">
-                            <span class="step-number">3.</span>
-                            Utilización = (Cap. Requerida / Cap. Efectiva) × 100
-                        </div>
-                        <div class="formula">
-                            ${utilizationPercentage.toFixed(1)}% = (${requiredCapacity.toLocaleString()} / ${effectiveCapacity.toLocaleString()}) × 100
-                        </div>
-                    </div>
-            `;
+            let resultHtml = '<div class="result-container">' +
+                '<div class="result-header">' +
+                    '<div class="result-title">Análisis Completo de Grúa</div>' +
+                    '<div>' + new Date().toLocaleDateString() + '</div>' +
+                '</div>' +
+                '<div class="result-grid">' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Carga a Izar</div>' +
+                        '<div class="result-value">' + loadWeight.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Capacidad Efectiva</div>' +
+                        '<div class="result-value">' + effectiveCapacity.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Capacidad Requerida</div>' +
+                        '<div class="result-value">' + requiredCapacity.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Utilización</div>' +
+                        '<div class="result-value">' + utilizationPercentage.toFixed(1) + '<span class="result-unit">%</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Momento de Carga</div>' +
+                        '<div class="result-value">' + loadMoment.toLocaleString() + '<span class="result-unit">kg⋅m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Radio de Operación</div>' +
+                        '<div class="result-value">' + radius + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Factor de Seguridad</div>' +
+                        '<div class="result-value">' + safetyFactor + '</div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Ratio de Estabilidad</div>' +
+                        '<div class="result-value">' + stabilityRatio.toFixed(2) + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="calculation-steps">' +
+                    '<h4>Pasos de Cálculo</h4>' +
+                    '<div class="step">' +
+                        '<span class="step-number">1.</span>' +
+                        'Capacidad Efectiva = Capacidad Nominal × Factor Climático × Factor Altura' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        effectiveCapacity.toLocaleString() + ' kg = ' + capacity.toLocaleString() + ' × ' + weatherFactor + ' × ' + heightFactor +
+                    '</div>' +
+                    '<div class="step">' +
+                        '<span class="step-number">2.</span>' +
+                        'Capacidad Requerida = Peso Carga × Factor Seguridad' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        requiredCapacity.toLocaleString() + ' kg = ' + loadWeight.toLocaleString() + ' × ' + safetyFactor +
+                    '</div>' +
+                    '<div class="step">' +
+                        '<span class="step-number">3.</span>' +
+                        'Utilización = (Cap. Requerida / Cap. Efectiva) × 100' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        utilizationPercentage.toFixed(1) + '% = (' + requiredCapacity.toLocaleString() + ' / ' + effectiveCapacity.toLocaleString() + ') × 100' +
+                    '</div>' +
+                '</div>';
 
             // Evaluación de seguridad
             if (utilizationPercentage <= 75) {
-                resultHtml += `
-                    <div class="alert alert-success">
-                        <span class="alert-icon">✅</span>
-                        <div>
-                            <strong>OPERACIÓN SEGURA - AUTORIZADA</strong><br>
-                            Utilización óptima. La grúa tiene amplia capacidad para esta operación.
-                            Cumple con todos los estándares de seguridad minera.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-success">' +
+                    '<span class="alert-icon">✅</span>' +
+                    '<div>' +
+                        '<strong>OPERACIÓN SEGURA - AUTORIZADA</strong><br>' +
+                        'Utilización óptima. La grúa tiene amplia capacidad para esta operación. ' +
+                        'Cumple con todos los estándares de seguridad minera.' +
+                    '</div>' +
+                '</div>';
             } else if (utilizationPercentage <= 85) {
-                resultHtml += `
-                    <div class="alert alert-warning">
-                        <span class="alert-icon">⚠️</span>
-                        <div>
-                            <strong>PRECAUCIÓN - REQUIERE SUPERVISIÓN</strong><br>
-                            Utilización moderadamente alta. Verificar condiciones específicas del terreno,
-                            clima y operador antes de proceder.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-warning">' +
+                    '<span class="alert-icon">⚠️</span>' +
+                    '<div>' +
+                        '<strong>PRECAUCIÓN - REQUIERE SUPERVISIÓN</strong><br>' +
+                        'Utilización moderadamente alta. Verificar condiciones específicas del terreno, ' +
+                        'clima y operador antes de proceder.' +
+                    '</div>' +
+                '</div>';
             } else if (utilizationPercentage <= 100) {
-                resultHtml += `
-                    <div class="alert alert-danger">
-                        <span class="alert-icon">⚠️</span>
-                        <div>
-                            <strong>RIESGO ALTO - EVALUACIÓN ESPECIAL REQUERIDA</strong><br>
-                            Utilización muy alta. Requiere aprobación de supervisor de operaciones
-                            y verificación exhaustiva de todos los parámetros.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-danger">' +
+                    '<span class="alert-icon">⚠️</span>' +
+                    '<div>' +
+                        '<strong>RIESGO ALTO - EVALUACIÓN ESPECIAL REQUERIDA</strong><br>' +
+                        'Utilización muy alta. Requiere aprobación de supervisor de operaciones ' +
+                        'y verificación exhaustiva de todos los parámetros.' +
+                    '</div>' +
+                '</div>';
             } else {
-                resultHtml += `
-                    <div class="alert alert-danger">
-                        <span class="alert-icon">❌</span>
-                        <div>
-                            <strong>OPERACIÓN PROHIBIDA - CAPACIDAD INSUFICIENTE</strong><br>
-                            La grúa NO tiene capacidad para esta operación. Seleccionar equipo
-                            de mayor capacidad o reducir la carga.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-danger">' +
+                    '<span class="alert-icon">❌</span>' +
+                    '<div>' +
+                        '<strong>OPERACIÓN PROHIBIDA - CAPACIDAD INSUFICIENTE</strong><br>' +
+                        'La grúa NO tiene capacidad para esta operación. Seleccionar equipo ' +
+                        'de mayor capacidad o reducir la carga.' +
+                    '</div>' +
+                '</div>';
             }
 
             resultHtml += '</div>';
 
             // Guardar resultados para reporte
             analysisResults.crane = {
-                loadWeight, radius, height, capacity, effectiveCapacity,
-                requiredCapacity, utilizationPercentage, safetyFactor,
-                craneType, weather, loadMoment, stabilityRatio
+                loadWeight: loadWeight, 
+                radius: radius, 
+                height: height, 
+                capacity: capacity, 
+                effectiveCapacity: effectiveCapacity,
+                requiredCapacity: requiredCapacity, 
+                utilizationPercentage: utilizationPercentage, 
+                safetyFactor: safetyFactor,
+                craneType: craneType, 
+                weather: weather, 
+                loadMoment: loadMoment, 
+                stabilityRatio: stabilityRatio
             };
 
             document.getElementById('craneAnalysisResult').innerHTML = resultHtml;
@@ -1053,164 +1073,229 @@
 
             const breakingStrength = materialCapacities[material][diameter] || 0;
             const workingLoad = (breakingStrength * conditionFactor * tempFactor) / safetyFactor;
-            const requiredCapacity = tensionPerLeg;
 
             // Presión específica en contacto
-            const contactPressure = tensionPerLeg / (Math.PI * (diameter/1000) * 0.1); // Estimación de presión en MPa
+            const contactPressure = tensionPerLeg / (Math.PI * (diameter/1000) * 0.1);
 
-            let resultHtml = `
-                <div class="result-container">
-                    <div class="result-header">
-                        <div class="result-title">Ingeniería de Eslingas - Análisis Detallado</div>
-                        <div>${new Date().toLocaleDateString()}</div>
-                    </div>
-                    
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <div class="result-label">Carga por Ramal</div>
-                            <div class="result-value">${loadPerLeg.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Tensión por Ramal</div>
-                            <div class="result-value">${tensionPerLeg.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Capacidad de Trabajo</div>
-                            <div class="result-value">${workingLoad.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Resistencia a Rotura</div>
-                            <div class="result-value">${breakingStrength.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Eficiencia Angular</div>
-                            <div class="result-value">${angleEfficiency.toFixed(3)}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Factor Distribución</div>
-                            <div class="result-value">${distributionFactor.toFixed(2)}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Presión de Contacto</div>
-                            <div class="result-value">${contactPressure.toFixed(1)}<span class="result-unit">MPa</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Utilización de Eslinga</div>
-                            <div class="result-value">${((tensionPerLeg/workingLoad)*100).toFixed(1)}<span class="result-unit">%</span></div>
-                        </div>
-                    </div>
-
-                    <div class="calculation-steps">
-                        <h4>Metodología de Cálculo</h4>
-                        <div class="step">
-                            <span class="step-number">1.</span>
-                            Carga por Ramal = Peso Total / Número de Ramales
-                        </div>
-                        <div class="formula">
-                            ${loadPerLeg.toLocaleString()} kg = ${weight.toLocaleString()} / ${legs}
-                        </div>
-                        <div class="step">
-                            <span class="step-number">2.</span>
-                            Tensión = Carga por Ramal / (sen(α) × Factor Distribución)
-                        </div>
-                        <div class="formula">
-                            ${tensionPerLeg.toLocaleString()} kg = ${loadPerLeg.toLocaleString()} / (${angleEfficiency.toFixed(3)} × ${distributionFactor})
-                        </div>
-                        <div class="step">
-                            <span class="step-number">3.</span>
-                            Capacidad Trabajo = (Resistencia × Factor Condición × Factor Temp.) / Factor Seguridad
-                        </div>
-                        <div class="formula">
-                            ${workingLoad.toLocaleString()} kg = (${breakingStrength.toLocaleString()} × ${conditionFactor} × ${tempFactor}) / ${safetyFactor}
-                        </div>
-                    </div>
-            `;
+            let resultHtml = '<div class="result-container">' +
+                '<div class="result-header">' +
+                    '<div class="result-title">Ingeniería de Eslingas - Análisis Detallado</div>' +
+                    '<div>' + new Date().toLocaleDateString() + '</div>' +
+                '</div>' +
+                '<div class="result-grid">' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Carga por Ramal</div>' +
+                        '<div class="result-value">' + loadPerLeg.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Tensión por Ramal</div>' +
+                        '<div class="result-value">' + tensionPerLeg.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Capacidad de Trabajo</div>' +
+                        '<div class="result-value">' + workingLoad.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Resistencia a Rotura</div>' +
+                        '<div class="result-value">' + breakingStrength.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Eficiencia Angular</div>' +
+                        '<div class="result-value">' + angleEfficiency.toFixed(3) + '</div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Factor Distribución</div>' +
+                        '<div class="result-value">' + distributionFactor.toFixed(2) + '</div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Presión de Contacto</div>' +
+                        '<div class="result-value">' + contactPressure.toFixed(1) + '<span class="result-unit">MPa</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Utilización de Eslinga</div>' +
+                        '<div class="result-value">' + ((tensionPerLeg/workingLoad)*100).toFixed(1) + '<span class="result-unit">%</span></div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="calculation-steps">' +
+                    '<h4>Metodología de Cálculo</h4>' +
+                    '<div class="step">' +
+                        '<span class="step-number">1.</span>' +
+                        'Carga por Ramal = Peso Total / Número de Ramales' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        loadPerLeg.toLocaleString() + ' kg = ' + weight.toLocaleString() + ' / ' + legs +
+                    '</div>' +
+                    '<div class="step">' +
+                        '<span class="step-number">2.</span>' +
+                        'Tensión = Carga por Ramal / (sen(α) × Factor Distribución)' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        tensionPerLeg.toLocaleString() + ' kg = ' + loadPerLeg.toLocaleString() + ' / (' + angleEfficiency.toFixed(3) + ' × ' + distributionFactor + ')' +
+                    '</div>' +
+                    '<div class="step">' +
+                        '<span class="step-number">3.</span>' +
+                        'Capacidad Trabajo = (Resistencia × Factor Condición × Factor Temp.) / Factor Seguridad' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        workingLoad.toLocaleString() + ' kg = (' + breakingStrength.toLocaleString() + ' × ' + conditionFactor + ' × ' + tempFactor + ') / ' + safetyFactor +
+                    '</div>' +
+                '</div>';
 
             // Evaluación de seguridad
             const utilizationSling = (tensionPerLeg / workingLoad) * 100;
 
             if (angle < 30) {
-                resultHtml += `
-                    <div class="alert alert-danger">
-                        <span class="alert-icon">❌</span>
-                        <div>
-                            <strong>ÁNGULO CRÍTICO - OPERACIÓN PROHIBIDA</strong><br>
-                            Ángulo menor a 30° genera tensiones excesivas. Modificar configuración de izaje.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-danger">' +
+                    '<span class="alert-icon">❌</span>' +
+                    '<div>' +
+                        '<strong>ÁNGULO CRÍTICO - OPERACIÓN PROHIBIDA</strong><br>' +
+                        'Ángulo menor a 30° genera tensiones excesivas. Modificar configuración de izaje.' +
+                    '</div>' +
+                '</div>';
             } else if (utilizationSling <= 80) {
-                resultHtml += `
-                    <div class="alert alert-success">
-                        <span class="alert-icon">✅</span>
-                        <div>
-                            <strong>CONFIGURACIÓN ÓPTIMA - OPERACIÓN AUTORIZADA</strong><br>
-                            Las eslingas seleccionadas son adecuadas para esta operación.
-                            Factor de seguridad cumple normativas mineras.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-success">' +
+                    '<span class="alert-icon">✅</span>' +
+                    '<div>' +
+                        '<strong>CONFIGURACIÓN ÓPTIMA - OPERACIÓN AUTORIZADA</strong><br>' +
+                        'Las eslingas seleccionadas son adecuadas para esta operación. ' +
+                        'Factor de seguridad cumple normativas mineras.' +
+                    '</div>' +
+                '</div>';
             } else if (utilizationSling <= 95) {
-                resultHtml += `
-                    <div class="alert alert-warning">
-                        <span class="alert-icon">⚠️</span>
-                        <div>
-                            <strong>UTILIZACIÓN ALTA - VERIFICAR CONDICIONES</strong><br>
-                            Eslingas en límite superior de trabajo. Inspeccionar detalladamente
-                            antes del uso y considerar diámetro superior.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-warning">' +
+                    '<span class="alert-icon">⚠️</span>' +
+                    '<div>' +
+                        '<strong>UTILIZACIÓN ALTA - VERIFICAR CONDICIONES</strong><br>' +
+                        'Eslingas en límite superior de trabajo. Inspeccionar detalladamente ' +
+                        'antes del uso y considerar diámetro superior.' +
+                    '</div>' +
+                '</div>';
             } else {
-                resultHtml += `
-                    <div class="alert alert-danger">
-                        <span class="alert-icon">❌</span>
-                        <div>
-                            <strong>CAPACIDAD INSUFICIENTE - CAMBIAR ESPECIFICACIÓN</strong><br>
-                            Las eslingas especificadas no tienen capacidad suficiente.
-                            Usar mayor diámetro o más ramales.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-danger">' +
+                    '<span class="alert-icon">❌</span>' +
+                    '<div>' +
+                        '<strong>CAPACIDAD INSUFICIENTE - CAMBIAR ESPECIFICACIÓN</strong><br>' +
+                        'Las eslingas especificadas no tienen capacidad suficiente. ' +
+                        'Usar mayor diámetro o más ramales.' +
+                    '</div>' +
+                '</div>';
             }
 
             resultHtml += '</div>';
 
             // Guardar resultados
             analysisResults.sling = {
-                weight, legs, angle, diameter, material, tensionPerLeg,
-                workingLoad, breakingStrength, utilizationSling, safetyFactor,
-                angleEfficiency, distributionFactor, contactPressure
+                weight: weight, 
+                legs: legs, 
+                angle: angle, 
+                diameter: diameter, 
+                material: material, 
+                tensionPerLeg: tensionPerLeg,
+                workingLoad: workingLoad, 
+                breakingStrength: breakingStrength, 
+                utilizationSling: utilizationSling, 
+                safetyFactor: safetyFactor,
+                angleEfficiency: angleEfficiency, 
+                distributionFactor: distributionFactor, 
+                contactPressure: contactPressure
             };
 
             document.getElementById('slingEngineeringResult').innerHTML = resultHtml;
+        }
+
+        function calculateUniformBeam() {
+            const totalLength = parseFloat(document.getElementById('structuralLength').value);
+            const totalWeight = parseFloat(document.getElementById('structuralWeight').value);
+
+            if (!totalLength || !totalWeight) {
+                alert('Ingrese la longitud y peso total para el cálculo');
+                return;
+            }
+
+            // Para viga uniforme, CG está en el centro
+            const centerOfGravity = totalLength / 2;
+            document.getElementById('manualCG').value = centerOfGravity.toFixed(2);
+
+            // Calcular puntos de izaje óptimos para viga uniforme
+            const liftSpan = totalLength * 0.293; // Puntos de Airy para mínima deflexión
+            const liftPoint1 = centerOfGravity - liftSpan;
+            const liftPoint2 = centerOfGravity + liftSpan;
+
+            let resultHtml = '<div class="result-container">' +
+                '<div class="result-header">' +
+                    '<div class="result-title">🎯 Cálculo Rápido - Viga Uniforme</div>' +
+                    '<div>' + new Date().toLocaleDateString() + '</div>' +
+                '</div>' +
+                '<div class="result-grid">' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Centro de Gravedad</div>' +
+                        '<div class="result-value">' + centerOfGravity.toFixed(2) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Punto de Izaje 1 (Óptimo)</div>' +
+                        '<div class="result-value">' + liftPoint1.toFixed(2) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Punto de Izaje 2 (Óptimo)</div>' +
+                        '<div class="result-value">' + liftPoint2.toFixed(2) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Separación entre Puntos</div>' +
+                        '<div class="result-value">' + (liftPoint2 - liftPoint1).toFixed(2) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Carga por Punto</div>' +
+                        '<div class="result-value">' + (totalWeight/2).toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Peso Lineal</div>' +
+                        '<div class="result-value">' + (totalWeight/totalLength).toFixed(0) + '<span class="result-unit">kg/m</span></div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="alert alert-success">' +
+                    '<span class="alert-icon">✅</span>' +
+                    '<div>' +
+                        '<strong>CONFIGURACIÓN ÓPTIMA CALCULADA</strong><br>' +
+                        'Puntos de Airy aplicados para mínima deflexión y máxima estabilidad. ' +
+                        'Ideal para vigas uniformes y estructuras simétricas.' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+
+            document.getElementById('structuralAnalysisResult').innerHTML = resultHtml;
         }
 
         function addConcentratedLoad() {
             const container = document.getElementById('concentratedLoads');
             const newLoad = document.createElement('div');
             newLoad.className = 'form-grid load-point';
-            newLoad.innerHTML = `
-                <div class="form-group">
-                    <label>Posición desde extremo izquierdo (m):</label>
-                    <input type="number" class="load-position" placeholder="ej: 8.2">
-                </div>
-                <div class="form-group">
-                    <label>Peso concentrado (kg):</label>
-                    <input type="number" class="load-weight" placeholder="ej: 850">
-                </div>
-                <div class="form-group">
-                    <label>Descripción:</label>
-                    <input type="text" class="load-description" placeholder="ej: Bomba auxiliar">
-                </div>
-            `;
+            newLoad.innerHTML = '<div class="form-group">' +
+                '<label>Posición desde extremo izquierdo (m):</label>' +
+                '<input type="number" class="load-position" placeholder="ej: 8.2">' +
+            '</div>' +
+            '<div class="form-group">' +
+                '<label>Peso concentrado (kg):</label>' +
+                '<input type="number" class="load-weight" placeholder="ej: 850">' +
+            '</div>' +
+            '<div class="form-group">' +
+                '<label>Descripción:</label>' +
+                '<input type="text" class="load-description" placeholder="ej: Bomba auxiliar">' +
+            '</div>' +
+            '<div class="form-group">' +
+                '<button class="btn btn-secondary" onclick="removeLoad(this)" style="margin-top: 28px;">Eliminar</button>' +
+            '</div>';
             container.appendChild(newLoad);
+        }
+
+        function removeLoad(button) {
+            button.closest('.load-point').remove();
         }
 
         function calculateStructuralAnalysis() {
             const totalLength = parseFloat(document.getElementById('structuralLength').value);
             const totalWeight = parseFloat(document.getElementById('structuralWeight').value);
             const structureType = document.getElementById('structureType').value;
+            const manualCG = parseFloat(document.getElementById('manualCG').value);
 
             if (!totalLength || !totalWeight) {
                 alert('Complete la longitud y peso total de la estructura');
@@ -1225,10 +1310,11 @@
             let concentratedWeight = 0;
             let loadDetails = [];
 
+            // Recopilar cargas concentradas
             for (let i = 0; i < positions.length; i++) {
                 const pos = parseFloat(positions[i].value);
                 const weight = parseFloat(weights[i].value);
-                const desc = descriptions[i].value || `Carga ${i+1}`;
+                const desc = descriptions[i].value || 'Carga ' + (i+1);
                 
                 if (pos && weight) {
                     totalMoment += pos * weight;
@@ -1237,110 +1323,215 @@
                 }
             }
 
-            // Peso distribuido
-            const distributedWeight = totalWeight - concentratedWeight;
-            const distributedMoment = (totalLength / 2) * distributedWeight;
+            let centerOfGravity;
+            let calculationMethod = '';
 
-            const totalMomentFinal = totalMoment + distributedMoment;
-            const centerOfGravity = totalMomentFinal / totalWeight;
+            // Determinar método de cálculo del CG
+            if (manualCG && manualCG > 0) {
+                centerOfGravity = manualCG;
+                calculationMethod = 'Centro de Gravedad Especificado Manualmente';
+            } else if (concentratedWeight > 0) {
+                // Peso distribuido restante
+                const distributedWeight = totalWeight - concentratedWeight;
+                const distributedMoment = (totalLength / 2) * distributedWeight;
 
-            // Puntos de izaje optimizados
-            const liftSpan = totalLength * 0.3; // 30% de la longitud total
-            const liftPoint1 = Math.max(0.1 * totalLength, centerOfGravity - liftSpan/2);
-            const liftPoint2 = Math.min(0.9 * totalLength, centerOfGravity + liftSpan/2);
+                const totalMomentFinal = totalMoment + distributedMoment;
+                centerOfGravity = totalMomentFinal / totalWeight;
+                calculationMethod = 'Calculado con Cargas Concentradas + Peso Distribuido';
+            } else {
+                // Viga uniforme por defecto
+                centerOfGravity = totalLength / 2;
+                calculationMethod = 'Viga Uniforme (Centro Geométrico)';
+            }
+
+            // Validación del CG
+            if (centerOfGravity <= 0 || centerOfGravity >= totalLength) {
+                alert('⚠️ ADVERTENCIA: Centro de gravedad fuera de los límites de la estructura');
+            }
+
+            // Puntos de izaje optimizados según el tipo de estructura
+            let liftSpan;
+            switch(structureType) {
+                case 'beam':
+                    liftSpan = totalLength * 0.293; // Puntos de Airy
+                    break;
+                case 'equipment':
+                    liftSpan = totalLength * 0.25; // Más conservador para equipos
+                    break;
+                case 'tank':
+                    liftSpan = totalLength * 0.2; // Muy conservador para tanques
+                    break;
+                default:
+                    liftSpan = totalLength * 0.3;
+            }
+
+            const liftPoint1 = Math.max(0.05 * totalLength, centerOfGravity - liftSpan/2);
+            const liftPoint2 = Math.min(0.95 * totalLength, centerOfGravity + liftSpan/2);
 
             // Cálculo de reacciones en puntos de izaje
             const d1 = liftPoint2 - liftPoint1;
             const reaction1 = totalWeight * (liftPoint2 - centerOfGravity) / d1;
             const reaction2 = totalWeight * (centerOfGravity - liftPoint1) / d1;
 
-            let resultHtml = `
-                <div class="result-container">
-                    <div class="result-header">
-                        <div class="result-title">Análisis Estructural Completo</div>
-                        <div>${new Date().toLocaleDateString()}</div>
-                    </div>
-                    
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <div class="result-label">Centro de Gravedad</div>
-                            <div class="result-value">${centerOfGravity.toFixed(2)}<span class="result-unit">m</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Peso Concentrado</div>
-                            <div class="result-value">${concentratedWeight.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Peso Distribuido</div>
-                            <div class="result-value">${distributedWeight.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Punto de Izaje 1</div>
-                            <div class="result-value">${liftPoint1.toFixed(2)}<span class="result-unit">m</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Punto de Izaje 2</div>
-                            <div class="result-value">${liftPoint2.toFixed(2)}<span class="result-unit">m</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Reacción Punto 1</div>
-                            <div class="result-value">${reaction1.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Reacción Punto 2</div>
-                            <div class="result-value">${reaction2.toLocaleString()}<span class="result-unit">kg</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Momento Total</div>
-                            <div class="result-value">${totalMomentFinal.toLocaleString()}<span class="result-unit">kg⋅m</span></div>
-                        </div>
-                    </div>
+            // Cálculo de momentos flexionantes máximos
+            const maxMoment1 = Math.abs(reaction1 * (centerOfGravity - liftPoint1));
+            const maxMoment2 = Math.abs(reaction2 * (liftPoint2 - centerOfGravity));
 
-                    <h4>Detalles de Cargas Concentradas</h4>
-                    <table class="reference-table">
-                        <thead>
-                            <tr>
-                                <th>Descripción</th>
-                                <th>Posición (m)</th>
-                                <th>Peso (kg)</th>
-                                <th>Momento (kg⋅m)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
+            let resultHtml = '<div class="result-container">' +
+                '<div class="result-header">' +
+                    '<div class="result-title">📐 Análisis Completo de Centro de Gravedad</div>' +
+                    '<div>' + new Date().toLocaleDateString() + '</div>' +
+                '</div>' +
+                '<div class="alert alert-warning">' +
+                    '<span class="alert-icon">🔬</span>' +
+                    '<div><strong>Método de Cálculo:</strong> ' + calculationMethod + '</div>' +
+                '</div>' +
+                '<div class="result-grid">' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">🎯 Centro de Gravedad</div>' +
+                        '<div class="result-value">' + centerOfGravity.toFixed(3) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Peso Concentrado Total</div>' +
+                        '<div class="result-value">' + concentratedWeight.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Peso Distribuido</div>' +
+                        '<div class="result-value">' + (totalWeight - concentratedWeight).toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">📍 Punto de Izaje 1</div>' +
+                        '<div class="result-value">' + liftPoint1.toFixed(3) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">📍 Punto de Izaje 2</div>' +
+                        '<div class="result-value">' + liftPoint2.toFixed(3) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">⚖️ Reacción Punto 1</div>' +
+                        '<div class="result-value">' + reaction1.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">⚖️ Reacción Punto 2</div>' +
+                        '<div class="result-value">' + reaction2.toLocaleString() + '<span class="result-unit">kg</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">📏 Separación de Puntos</div>' +
+                        '<div class="result-value">' + (liftPoint2 - liftPoint1).toFixed(2) + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">📊 Momento Máximo</div>' +
+                        '<div class="result-value">' + Math.max(maxMoment1, maxMoment2).toLocaleString() + '<span class="result-unit">kg⋅m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">% Desbalance</div>' +
+                        '<div class="result-value">' + Math.abs(((reaction1-reaction2)/totalWeight)*100).toFixed(1) + '<span class="result-unit">%</span></div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="calculation-steps">' +
+                    '<h4>🧮 Pasos de Cálculo del Centro de Gravedad</h4>' +
+                    '<div class="step">' +
+                        '<span class="step-number">1.</span>' +
+                        'Momento Total = Σ(Peso × Distancia) para todas las cargas' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        'Momento = ' + totalMoment.toLocaleString() + ' kg⋅m (cargas concentradas) + ' + ((totalWeight - concentratedWeight) * totalLength/2).toLocaleString() + ' kg⋅m (distribuido)' +
+                    '</div>' +
+                    '<div class="step">' +
+                        '<span class="step-number">2.</span>' +
+                        'Centro de Gravedad = Momento Total / Peso Total' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        'CG = ' + centerOfGravity.toFixed(3) + ' m desde extremo izquierdo' +
+                    '</div>' +
+                    '<div class="step">' +
+                        '<span class="step-number">3.</span>' +
+                        'Reacciones: R₁ = W×(P₂-CG)/(P₂-P₁) | R₂ = W×(CG-P₁)/(P₂-P₁)' +
+                    '</div>' +
+                    '<div class="formula">' +
+                        'R₁ = ' + reaction1.toLocaleString() + ' kg | R₂ = ' + reaction2.toLocaleString() + ' kg' +
+                    '</div>' +
+                '</div>';
 
-            loadDetails.forEach(load => {
-                resultHtml += `
-                    <tr>
-                        <td>${load.description}</td>
-                        <td>${load.position}</td>
-                        <td>${load.weight.toLocaleString()}</td>
-                        <td>${(load.position * load.weight).toLocaleString()}</td>
-                    </tr>
-                `;
-            });
+            // Mostrar tabla de cargas concentradas si existen
+            if (loadDetails.length > 0) {
+                resultHtml += '<h4>📋 Detalle de Cargas Concentradas</h4>' +
+                    '<table class="reference-table">' +
+                        '<thead>' +
+                            '<tr>' +
+                                '<th>Descripción</th>' +
+                                '<th>Posición (m)</th>' +
+                                '<th>Peso (kg)</th>' +
+                                '<th>Momento (kg⋅m)</th>' +
+                                '<th>% del Total</th>' +
+                            '</tr>' +
+                        '</thead>' +
+                        '<tbody>';
 
-            resultHtml += `
-                        </tbody>
-                    </table>
+                for (let i = 0; i < loadDetails.length; i++) {
+                    const load = loadDetails[i];
+                    resultHtml += '<tr>' +
+                        '<td>' + load.description + '</td>' +
+                        '<td>' + load.position.toFixed(2) + '</td>' +
+                        '<td>' + load.weight.toLocaleString() + '</td>' +
+                        '<td>' + (load.position * load.weight).toLocaleString() + '</td>' +
+                        '<td>' + ((load.weight/totalWeight)*100).toFixed(1) + '%</td>' +
+                    '</tr>';
+                }
 
-                    <div class="alert alert-success">
-                        <span class="alert-icon">📍</span>
-                        <div>
-                            <strong>CONFIGURACIÓN DE IZAJE RECOMENDADA</strong><br>
-                            Punto 1: ${liftPoint1.toFixed(2)} m | Punto 2: ${liftPoint2.toFixed(2)} m<br>
-                            Separación entre puntos: ${(liftPoint2 - liftPoint1).toFixed(2)} m<br>
-                            Distribución de carga: ${((reaction1/totalWeight)*100).toFixed(1)}% - ${((reaction2/totalWeight)*100).toFixed(1)}%
-                        </div>
-                    </div>
-                </div>
-            `;
+                resultHtml += '</tbody></table>';
+            }
+
+            // Evaluación de la configuración
+            const balanceQuality = Math.abs(((reaction1-reaction2)/totalWeight)*100);
+            
+            if (balanceQuality <= 5) {
+                resultHtml += '<div class="alert alert-success">' +
+                    '<span class="alert-icon">✅</span>' +
+                    '<div>' +
+                        '<strong>CONFIGURACIÓN ÓPTIMA DE IZAJE</strong><br>' +
+                        'Excelente balance de cargas (' + balanceQuality.toFixed(1) + '% desbalance).<br>' +
+                        '📍 Puntos recomendados: ' + liftPoint1.toFixed(2) + 'm - ' + liftPoint2.toFixed(2) + 'm<br>' +
+                        '⚖️ Distribución: ' + ((reaction1/totalWeight)*100).toFixed(1) + '% - ' + ((reaction2/totalWeight)*100).toFixed(1) + '%' +
+                    '</div>' +
+                '</div>';
+            } else if (balanceQuality <= 10) {
+                resultHtml += '<div class="alert alert-warning">' +
+                    '<span class="alert-icon">⚠️</span>' +
+                    '<div>' +
+                        '<strong>CONFIGURACIÓN ACEPTABLE - VERIFICAR</strong><br>' +
+                        'Desbalance moderado (' + balanceQuality.toFixed(1) + '%). Verificar capacidad de eslingas.<br>' +
+                        'Considerar ajustar puntos de izaje si es posible.' +
+                    '</div>' +
+                '</div>';
+            } else {
+                resultHtml += '<div class="alert alert-danger">' +
+                    '<span class="alert-icon">❌</span>' +
+                    '<div>' +
+                        '<strong>DESBALANCE CRÍTICO - RECONFIGURAR</strong><br>' +
+                        'Alto desbalance (' + balanceQuality.toFixed(1) + '%). Riesgo de inclinación excesiva.<br>' +
+                        'Revisar distribución de cargas o usar más puntos de izaje.' +
+                    '</div>' +
+                '</div>';
+            }
+
+            resultHtml += '</div>';
 
             // Guardar resultados
             analysisResults.structural = {
-                totalLength, totalWeight, centerOfGravity, concentratedWeight,
-                distributedWeight, liftPoint1, liftPoint2, reaction1, reaction2,
-                loadDetails, structureType
+                totalLength: totalLength,
+                totalWeight: totalWeight,
+                centerOfGravity: centerOfGravity,
+                concentratedWeight: concentratedWeight,
+                distributedWeight: totalWeight - concentratedWeight,
+                liftPoint1: liftPoint1,
+                liftPoint2: liftPoint2,
+                reaction1: reaction1,
+                reaction2: reaction2,
+                loadDetails: loadDetails,
+                structureType: structureType,
+                calculationMethod: calculationMethod,
+                balanceQuality: balanceQuality
             };
 
             document.getElementById('structuralAnalysisResult').innerHTML = resultHtml;
@@ -1370,83 +1561,81 @@
             // Factor de estabilidad
             const stabilityFactor = stabilizingMoment / windMoment;
 
-            let resultHtml = `
-                <div class="result-container">
-                    <div class="result-header">
-                        <div class="result-title">Análisis de Estabilidad</div>
-                        <div>${new Date().toLocaleDateString()}</div>
-                    </div>
-                    
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <div class="result-label">Presión de Viento</div>
-                            <div class="result-value">${windPressure.toFixed(0)}<span class="result-unit">Pa</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Fuerza de Viento</div>
-                            <div class="result-value">${(windForce/1000).toFixed(1)}<span class="result-unit">kN</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Momento Volcante</div>
-                            <div class="result-value">${windMoment.toFixed(1)}<span class="result-unit">kN⋅m</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Momento Estabilizador</div>
-                            <div class="result-value">${stabilizingMoment.toFixed(1)}<span class="result-unit">kN⋅m</span></div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Factor de Estabilidad</div>
-                            <div class="result-value">${stabilityFactor.toFixed(2)}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Base de Apoyo</div>
-                            <div class="result-value">${base}<span class="result-unit">m</span></div>
-                        </div>
-                    </div>
-
-                    <div class="formula">
-                        Factor de Estabilidad = Momento Estabilizador / Momento Volcante = ${stabilityFactor.toFixed(2)}
-                    </div>
-            `;
+            let resultHtml = '<div class="result-container">' +
+                '<div class="result-header">' +
+                    '<div class="result-title">Análisis de Estabilidad</div>' +
+                    '<div>' + new Date().toLocaleDateString() + '</div>' +
+                '</div>' +
+                '<div class="result-grid">' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Presión de Viento</div>' +
+                        '<div class="result-value">' + windPressure.toFixed(0) + '<span class="result-unit">Pa</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Fuerza de Viento</div>' +
+                        '<div class="result-value">' + (windForce/1000).toFixed(1) + '<span class="result-unit">kN</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Momento Volcante</div>' +
+                        '<div class="result-value">' + windMoment.toFixed(1) + '<span class="result-unit">kN⋅m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Momento Estabilizador</div>' +
+                        '<div class="result-value">' + stabilizingMoment.toFixed(1) + '<span class="result-unit">kN⋅m</span></div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Factor de Estabilidad</div>' +
+                        '<div class="result-value">' + stabilityFactor.toFixed(2) + '</div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Base de Apoyo</div>' +
+                        '<div class="result-value">' + base + '<span class="result-unit">m</span></div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="formula">' +
+                    'Factor de Estabilidad = Momento Estabilizador / Momento Volcante = ' + stabilityFactor.toFixed(2) +
+                '</div>';
 
             if (stabilityFactor >= 2.0) {
-                resultHtml += `
-                    <div class="alert alert-success">
-                        <span class="alert-icon">✅</span>
-                        <div>
-                            <strong>ESTABILIDAD EXCELENTE</strong><br>
-                            Factor de estabilidad superior a 2.0. Operación segura bajo las condiciones especificadas.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-success">' +
+                    '<span class="alert-icon">✅</span>' +
+                    '<div>' +
+                        '<strong>ESTABILIDAD EXCELENTE</strong><br>' +
+                        'Factor de estabilidad superior a 2.0. Operación segura bajo las condiciones especificadas.' +
+                    '</div>' +
+                '</div>';
             } else if (stabilityFactor >= 1.5) {
-                resultHtml += `
-                    <div class="alert alert-warning">
-                        <span class="alert-icon">⚠️</span>
-                        <div>
-                            <strong>ESTABILIDAD ACEPTABLE - MONITOREAR CONDICIONES</strong><br>
-                            Verificar continuamente condiciones de viento durante la operación.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-warning">' +
+                    '<span class="alert-icon">⚠️</span>' +
+                    '<div>' +
+                        '<strong>ESTABILIDAD ACEPTABLE - MONITOREAR CONDICIONES</strong><br>' +
+                        'Verificar continuamente condiciones de viento durante la operación.' +
+                    '</div>' +
+                '</div>';
             } else {
-                resultHtml += `
-                    <div class="alert alert-danger">
-                        <span class="alert-icon">❌</span>
-                        <div>
-                            <strong>RIESGO DE VOLCAMIENTO - OPERACIÓN PROHIBIDA</strong><br>
-                            Factor de estabilidad insuficiente. Mejorar base de apoyo o suspender operación.
-                        </div>
-                    </div>
-                `;
+                resultHtml += '<div class="alert alert-danger">' +
+                    '<span class="alert-icon">❌</span>' +
+                    '<div>' +
+                        '<strong>RIESGO DE VOLCAMIENTO - OPERACIÓN PROHIBIDA</strong><br>' +
+                        'Factor de estabilidad insuficiente. Mejorar base de apoyo o suspender operación.' +
+                    '</div>' +
+                '</div>';
             }
 
             resultHtml += '</div>';
 
             // Guardar resultados
             analysisResults.stability = {
-                base, craneWeight, cgHeight, windSpeed, windArea,
-                windPressure, windForce, windMoment, stabilizingMoment, stabilityFactor
+                base: base, 
+                craneWeight: craneWeight, 
+                cgHeight: cgHeight, 
+                windSpeed: windSpeed, 
+                windArea: windArea,
+                windPressure: windPressure, 
+                windForce: windForce, 
+                windMoment: windMoment, 
+                stabilizingMoment: stabilizingMoment, 
+                stabilityFactor: stabilityFactor
             };
 
             document.getElementById('stabilityResult').innerHTML = resultHtml;
@@ -1458,72 +1647,61 @@
             const companyName = document.getElementById('companyName').value || 'Empresa Minera';
             const operationDate = document.getElementById('operationDate').value || new Date().toISOString().split('T')[0];
 
-            let reportHtml = `
-                <div class="result-container">
-                    <div class="result-header">
-                        <div class="result-title">REPORTE TÉCNICO DE OPERACIÓN DE IZAJE</div>
-                        <div>Documento Oficial</div>
-                    </div>
-                    
-                    <h3>Información del Proyecto</h3>
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <div class="result-label">Proyecto</div>
-                            <div class="result-value">${projectName}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Empresa</div>
-                            <div class="result-value">${companyName}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Ingeniero Responsable</div>
-                            <div class="result-value">${engineerName}</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label">Fecha de Operación</div>
-                            <div class="result-value">${new Date(operationDate).toLocaleDateString()}</div>
-                        </div>
-                    </div>
-            `;
+            let reportHtml = '<div class="result-container">' +
+                '<div class="result-header">' +
+                    '<div class="result-title">REPORTE TÉCNICO DE OPERACIÓN DE IZAJE</div>' +
+                    '<div>Documento Oficial</div>' +
+                '</div>' +
+                '<h3>Información del Proyecto</h3>' +
+                '<div class="result-grid">' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Proyecto</div>' +
+                        '<div class="result-value">' + projectName + '</div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Empresa</div>' +
+                        '<div class="result-value">' + companyName + '</div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Ingeniero Responsable</div>' +
+                        '<div class="result-value">' + engineerName + '</div>' +
+                    '</div>' +
+                    '<div class="result-item">' +
+                        '<div class="result-label">Fecha de Operación</div>' +
+                        '<div class="result-value">' + new Date(operationDate).toLocaleDateString() + '</div>' +
+                    '</div>' +
+                '</div>';
 
             // Incluir resumen de todos los análisis realizados
             if (analysisResults.crane) {
-                reportHtml += `
-                    <h3>Resumen de Análisis de Grúa</h3>
-                    <p><strong>Utilización:</strong> ${analysisResults.crane.utilizationPercentage.toFixed(1)}% | 
-                    <strong>Factor de Seguridad:</strong> ${analysisResults.crane.safetyFactor} | 
-                    <strong>Capacidad Efectiva:</strong> ${analysisResults.crane.effectiveCapacity.toLocaleString()} kg</p>
-                `;
+                reportHtml += '<h3>Resumen de Análisis de Grúa</h3>' +
+                    '<p><strong>Utilización:</strong> ' + analysisResults.crane.utilizationPercentage.toFixed(1) + '% | ' +
+                    '<strong>Factor de Seguridad:</strong> ' + analysisResults.crane.safetyFactor + ' | ' +
+                    '<strong>Capacidad Efectiva:</strong> ' + analysisResults.crane.effectiveCapacity.toLocaleString() + ' kg</p>';
             }
 
             if (analysisResults.sling) {
-                reportHtml += `
-                    <h3>Resumen de Análisis de Eslingas</h3>
-                    <p><strong>Tensión por Ramal:</strong> ${analysisResults.sling.tensionPerLeg.toLocaleString()} kg | 
-                    <strong>Utilización:</strong> ${analysisResults.sling.utilizationSling.toFixed(1)}% | 
-                    <strong>Material:</strong> ${analysisResults.sling.material}</p>
-                `;
+                reportHtml += '<h3>Resumen de Análisis de Eslingas</h3>' +
+                    '<p><strong>Tensión por Ramal:</strong> ' + analysisResults.sling.tensionPerLeg.toLocaleString() + ' kg | ' +
+                    '<strong>Utilización:</strong> ' + analysisResults.sling.utilizationSling.toFixed(1) + '% | ' +
+                    '<strong>Material:</strong> ' + analysisResults.sling.material + '</p>';
             }
 
             if (analysisResults.structural) {
-                reportHtml += `
-                    <h3>Resumen de Análisis Estructural</h3>
-                    <p><strong>Centro de Gravedad:</strong> ${analysisResults.structural.centerOfGravity.toFixed(2)} m | 
-                    <strong>Puntos de Izaje:</strong> ${analysisResults.structural.liftPoint1.toFixed(2)} m - ${analysisResults.structural.liftPoint2.toFixed(2)} m</p>
-                `;
+                reportHtml += '<h3>Resumen de Análisis Estructural</h3>' +
+                    '<p><strong>Centro de Gravedad:</strong> ' + analysisResults.structural.centerOfGravity.toFixed(2) + ' m | ' +
+                    '<strong>Puntos de Izaje:</strong> ' + analysisResults.structural.liftPoint1.toFixed(2) + ' m - ' + analysisResults.structural.liftPoint2.toFixed(2) + ' m</p>';
             }
 
-            reportHtml += `
-                    <div class="alert alert-success">
-                        <span class="alert-icon">📋</span>
-                        <div>
-                            <strong>REPORTE GENERADO EXITOSAMENTE</strong><br>
-                            Este reporte cumple con las normativas DS 132, ANSI B30 e ISO 4301.
-                            Válido para presentación a autoridades mineras.
-                        </div>
-                    </div>
-                </div>
-            `;
+            reportHtml += '<div class="alert alert-success">' +
+                '<span class="alert-icon">📋</span>' +
+                '<div>' +
+                    '<strong>REPORTE GENERADO EXITOSAMENTE</strong><br>' +
+                    'Este reporte cumple con las normativas DS 132, ANSI B30 e ISO 4301. ' +
+                    'Válido para presentación a autoridades mineras.' +
+                '</div>' +
+            '</div>' +
+        '</div>';
 
             document.getElementById('reportPreview').innerHTML = reportHtml;
         }
